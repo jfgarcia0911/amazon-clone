@@ -1,14 +1,24 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
-export default function SignUp() {
+import { useRouter } from "next/navigation";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { auth, db } from "../../firebase/config";
+import { doc, setDoc } from "firebase/firestore";
+
+
+export default function SignUpPage() {
+	const [createUserWithEmailAndPassword, user, error] =
+		useCreateUserWithEmailAndPassword(auth);
 	const [formData, setFormData] = useState({
 		name: "",
 		email: "",
 		password: "",
 		confirmPassword: "",
 	});
-    const [error, setError] = useState({})
+	const [errors, setErrors] = useState({});
+	const router = useRouter();
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const handleChange = (e) => {
 		setFormData({
@@ -16,40 +26,92 @@ export default function SignUp() {
 			[e.target.id]: e.target.value,
 		});
 
-        setError({
-            ...error,
-            [e.target.id]: ''
-        })
+		if (errors[e.target.id]) {
+			setErrors({
+				...errors,
+				[e.target.id]: "",
+			});
+		}
 	};
 
-    const validateForm = () => {
-        const newError = {}
-
-        if(!formData.name.trim()){
-            newError.name = "Name is required";
-        }
-        if(!formData.email.trim()){
-            newError.email = "Email is required"
-        }
-        if(!formData.password){
-            newError.password = "Password is required"
-        }else if(formData.password.length < 6) {
-            newError.password = "Password must be at least 6 characters"
-        }
-        if(!formData.confirmPassword){
-            newError.confirmPassword = 'Please confirm your password'
-        }else if(formData.password !== formData.confirmPassword){
-            newError.confirmPassword = 'Password do not match'
-        }
-
-        setError(newError)
-        return Object.keys(newError).length === 0
-    }
-
-	const handleSubmit = (e) => {
-        e.preventDefault()
-        validateForm()
+	const handleSignin = () => {
+		router.push("/sign-in");
 	};
+	//Validate input for errors
+	const validateForm = () => {
+		const newError = {};
+
+		if (!formData.name.trim()) {
+			newError.name = "Name is required";
+		}
+		if (!formData.email.trim()) {
+			newError.email = "Email is required";
+		}
+		if (!formData.password) {
+			newError.password = "Password is required";
+		} else if (formData.password.length < 6) {
+			newError.password = "Password must be at least 6 characters";
+		}
+		if (!formData.confirmPassword) {
+			newError.confirmPassword = "Please confirm your password";
+		} else if (formData.password !== formData.confirmPassword) {
+			newError.confirmPassword = "Password do not match";
+		}
+
+		setErrors(newError);
+		return Object.keys(newError).length === 0;
+	};
+
+    //Used for email and password sign in
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+
+		if (validateForm()) {
+			setIsSubmitting(true);
+
+			try {
+				//Create user with email and password for sign in
+				const res = await createUserWithEmailAndPassword(
+					formData.email,
+					formData.password
+				);
+				console.log(res)
+
+				if (res) {
+					//Save user to Firestore
+					await setDoc(doc(db, "amazon-users", res.user.uid), {
+						uid: res.user.uid,
+						displayName: formData.name,
+						email: formData.email,
+						photoURL: "",
+						provider: "email",
+						createdAt: new Date(),
+					});
+					console.log("User created and saved to Firestore:", res.user);
+					alert("Account created successfully! Your data has been saved.");
+					router.push('/sign-in')
+				}
+			} catch (error) {
+				console.error("Signup error:", error)
+			} finally {
+				setIsSubmitting(false);
+			}
+		}
+	};
+
+
+	// React will re-render when `user` or `error` changes
+	useEffect(() => {
+		if (user) {
+			console.log("User created:", user.user);
+			alert("Account created successfully!");
+		}
+
+		if (error) {
+			console.log("🔥 Raw error object:", error);
+			alert("Signup failed. The email address is already existed.");
+		}
+	}, [user, error]);
 	return (
 		<div className="p-10 flex justify-center w-full  ">
 			<div>
@@ -78,9 +140,15 @@ export default function SignUp() {
 							value={formData.name}
 							onChange={handleChange}
 							placeholder="Enter your name"
-							className={`w-full border rounded-sm p-2 pl-3 border-gray-400 focus:outline-none  ${error.name ? 'border-red-500 focus:border-red-500' : 'focus:ring-1 focus:ring-blue-400  mb-2'  }`}
+							className={`w-full border rounded-sm p-2 pl-3 border-gray-400 focus:outline-none  ${
+								errors.name
+									? "border-red-500 focus:border-red-500"
+									: "focus:ring-1 focus:ring-blue-400  mb-2"
+							}`}
 						/>
-                        <p className="text-red-500 mb-2 mt-1 text-sm">{error.name}</p>
+						<p className="text-red-500 mb-2 mt-1 text-sm">
+							{errors.name}
+						</p>
 
 						<label
 							htmlFor="email"
@@ -91,12 +159,18 @@ export default function SignUp() {
 						<input
 							id="email"
 							type="email"
-                            value={formData.email}
+							value={formData.email}
 							onChange={handleChange}
 							placeholder="Enter your email"
-							className={`w-full border rounded-sm p-2 pl-3 border-gray-400 focus:outline-none  ${error.email ? 'border-red-500 focus:border-red-500' : 'focus:ring-1 focus:ring-blue-400  mb-2'  }`}
+							className={`w-full border rounded-sm p-2 pl-3 border-gray-400 focus:outline-none  ${
+								errors.email
+									? "border-red-500 focus:border-red-500"
+									: "focus:ring-1 focus:ring-blue-400  mb-2"
+							}`}
 						/>
-                        <p className="text-red-500 mb-2 mt-1 text-sm">{error.email}</p>
+						<p className="text-red-500 mb-2 mt-1 text-sm">
+							{errors.email}
+						</p>
 
 						<label
 							htmlFor="password"
@@ -107,12 +181,18 @@ export default function SignUp() {
 						<input
 							id="password"
 							type="password"
-                            value={formData.password}
+							value={formData.password}
 							onChange={handleChange}
 							placeholder="Atleast 6 characters"
-							className={`w-full border rounded-sm p-2 pl-3 border-gray-400 focus:outline-none  ${error.password ? 'border-red-500 focus:border-red-500' : 'focus:ring-1 focus:ring-blue-400  mb-2'  }`}
+							className={`w-full border rounded-sm p-2 pl-3 border-gray-400 focus:outline-none  ${
+								errors.password
+									? "border-red-500 focus:border-red-500"
+									: "focus:ring-1 focus:ring-blue-400  mb-2"
+							}`}
 						/>
-                        <p className="text-red-500 mb-2 mt-1 text-sm">{error.password}</p>
+						<p className="text-red-500 mb-2 mt-1 text-sm">
+							{errors.password}
+						</p>
 
 						<label
 							htmlFor="confirmPassword"
@@ -123,18 +203,27 @@ export default function SignUp() {
 						<input
 							id="confirmPassword"
 							type="password"
-                            value={formData.confirmPassword}
+							value={formData.confirmPassword}
 							onChange={handleChange}
 							placeholder="Confirm your password"
-							className={`w-full border rounded-sm p-2 pl-3 border-gray-400 focus:outline-none  ${error.confirmPassword ? 'border-red-500 focus:border-red-500' : 'focus:ring-1 focus:ring-blue-400  mb-2'  }`}
+							className={`w-full border rounded-sm p-2 pl-3 border-gray-400 focus:outline-none  ${
+								errors.confirmPassword
+									? "border-red-500 focus:border-red-500"
+									: "focus:ring-1 focus:ring-blue-400  mb-2"
+							}`}
 						/>
-                        <p className="text-red-500 mb-2 mt-1 text-sm">{error.confirmPassword}</p>
+						<p className="text-red-500 mb-2 mt-1 text-sm">
+							{errors.confirmPassword}
+						</p>
 
 						<button
 							type="submit"
+							disabled={isSubmitting}
 							className="bg-yellow-300 p-2 w-full rounded-4xl mt-2 text-sm cursor-pointer"
 						>
-							Create Amazon account{" "}
+							{isSubmitting
+								? "Creating account..."
+								: "Create Amazon account"}
 						</button>
 					</form>
 					<div className="relative mt-6 ">
@@ -156,10 +245,13 @@ export default function SignUp() {
 						/>
 						<span>Sign in with Google</span>
 					</div>
-					<div className="mt-6 text-center text-gray-500 text-sm ">
-						<span>Dont have an account? </span>
+					<div
+						onClick={handleSignin}
+						className="mt-6 text-center text-gray-500 text-sm "
+					>
+						<span>Already have an account? </span>
 						<span className="text-blue-500 cursor-pointer">
-							Sign up
+							Sign in
 						</span>
 					</div>
 				</div>
