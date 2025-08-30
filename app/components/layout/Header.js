@@ -77,11 +77,27 @@ export default function Header() {
 		setCategoryWidth(width);
 	}, [category]);
 
+	useEffect(() => {
+		function handleClickOutside(event) {
+			if (
+				buttonRef.current &&
+				!buttonRef.current.contains(event.target)
+			) {
+				setOpen(false);
+			}
+		}
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [setOpen]);
+
 	return (
 		<header className="bg-gray-900  text-white ">
 			<div className="flex items-center  justify-between px-5 py-1  space-x-5 h-16">
 				{/* Logo */}
-				<div className="flex items-center hover:border-1 py-1 px-1">
+				<div className="flex items-center hover:border-1 py-1 px-1 cursor-pointer">
 					<Image
 						src="/amazon.png"
 						alt="Logo"
@@ -93,7 +109,7 @@ export default function Header() {
 				</div>
 
 				{/* Deliver To */}
-				<div className="flex relative space-x-1 items-center w-28 hover:border-1 p-1">
+				<div className="flex relative space-x-1 items-center w-28 hover:border-1 p-1 cursor-pointer">
 					<MapPin size={40} className=" " />
 					<div className="text-xs leading-none">
 						Deliver to{" "}
@@ -117,7 +133,7 @@ export default function Header() {
 							aria-label="Search Amazon"
 							className="bg-orange-300 px-3 py-2 ml-auto rounded-r-sm hover:brightness-90"
 						>
-							<Search className="text-black" size={25} />
+							<Search className="text-black cursor-pointer" size={25} />
 						</button>
 					</form>
 
@@ -130,7 +146,7 @@ export default function Header() {
 						className="absolute h-10 px-2 space-x-1  text-gray-500 flex items-center justify-center  border-r border-gray-400 z-10 rounded-sm focus:ring-2 focus:ring-yellow-500 cursor-pointer"
 					>
 						<div className="text-sm">{category}</div>
-						<div class="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray"></div>
+						<div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray"></div>
 					</button>
 
 					{/* Dropdown menu */}
@@ -150,7 +166,7 @@ export default function Header() {
 					)}
 				</div>
 				{/* Language */}
-				<div className="flex relative group  items-center  ">
+				<div className="flex relative group  items-center cursor-pointer ">
 					<div className="flex space-x-1 hover:border-1  py-3 px-1">
 						<Image
 							src="/us-flag.png"
@@ -165,11 +181,11 @@ export default function Header() {
 					{/* Arrow Down */}
 					<div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-white"></div>
 					{/* <!-- Tooltip container (hidden by default) --> */}
-					<div class="absolute hidden  group-hover:block top-13 left-0 mt- w-52 bg-white border border-gray-300 rounded shadow-lg z-50">
+					<div className="absolute hidden  group-hover:block top-12 left-0 mt- w-52 bg-white border border-gray-300 rounded shadow-lg z-50">
 						{/* <!-- Triangle at the top --> */}
-						<div class="absolute -top-2 left-12 w-4 h-4 rotate-45 bg-white border-t border-l border-gray-200"></div>
+						<div className="absolute -top-2 left-12 w-4 h-4 rotate-45 bg-white border-t border-l border-gray-200"></div>
 						{/* <!-- Tooltip content --> */}
-						<div class="p-2 text-black">
+						<div className="p-2 text-black">
 							<h1 className="text-sm">
 								Change Language{" "}
 								<span className="underline text-blue-500 text-xs">
@@ -203,7 +219,7 @@ export default function Header() {
 				</div>
 
 				{/* Hello Sign in */}
-				<div className="flex relative space-x-1 items-center w-34  group">
+				<div className="flex relative space-x-1 items-center w-34  cursor-pointer  group">
 					<div className="text-xs leading-none group-hover:border-1 px-1 py-2">
 						Helllo, sign in{" "}
 						<span className="text-sm font-bold">
@@ -213,7 +229,7 @@ export default function Header() {
 					{/* Arrow Down */}
 					<div className=" border-l-4 border-t-4 border-r-4 border-l-transparent border-r-transparent "></div>
 					{/* Tooltip container */}
-					<div className="absolute hidden   group-hover:block  bg-white w-150 h-105 top-13 -left-80 z-30 border border-gray-300 rounded-lg">
+					<div className="absolute hidden   group-hover:block  bg-white w-150 h-105 top-12 -left-80 z-30 border border-gray-300 rounded-lg">
 						{/* <!-- Triangle at the top --> */}
 						<div className="absolute bg-white h-4 w-4 rotate-45 -top-2 left-110">
 							d
@@ -264,7 +280,7 @@ export default function Header() {
 					</div>
 				</div>
 				{/* Returns & Orders				 */}
-				<div className="flex relative space-x-1 items-center w-18 hover:border-1 px-1 py-2">
+				<div className="flex relative space-x-1 items-center w-18 hover:border-1 px-1 py-2 cursor-pointer">
 					<div className="text-xs leading-none">
 						Returns{"    "}
 						<span className="text-sm block font-bold">
@@ -274,7 +290,7 @@ export default function Header() {
 				</div>
 
 				{/* Cart */}
-				<div onClick={handleCartQuantity} className="flex relative  items-center w-20 hover:border-1 px-1 py-2">
+				<div onClick={handleCartQuantity} className="flex relative  items-center w-20 hover:border-1 px-1 py-2 cursor-pointer">
 					<div className="text-xs  flex items-baseline space-x-1">
 						<ShoppingCart size={30} />
 						<div className="relative">
@@ -289,6 +305,4 @@ export default function Header() {
 		</header>
 	);
 }
-{
-	/* <ShoppingCart /> */
-}
+
