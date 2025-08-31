@@ -12,6 +12,7 @@ export default function Header() {
 	const [open, setOpen] = useState(false);
 	const [category, setCategory] = useState("All");
 	const buttonRef = useRef();
+	const dropdownRef = useRef();
 	const [categoryWidth, setCategoryWidth] = useState(60);
 	const [languageCode, setLanguageCode] = useState("EN");
 	const [cartQuantity, setCartQuantity] = useState(0);
@@ -68,7 +69,7 @@ export default function Header() {
 
 	const handleCategory = (category) => {
 		setCategory(category);
-		setOpen(!open);
+		setOpen(false);
 	};
 
 	const handleCartQuantity = () => {
@@ -85,14 +86,14 @@ export default function Header() {
 	};
 
 	const handleLogout = () => {
-  signOut(auth)
-    .then(() => {
-      console.log("User signed out");
-    })
-    .catch((error) => {
-      console.error("Error signing out:", error);
-    });
-}
+		signOut(auth)
+			.then(() => {
+				console.log("User signed out");
+			})
+			.catch((error) => {
+				console.error("Error signing out:", error);
+			});
+	};
 
 	useEffect(() => {
 		const width = buttonRef.current.offsetWidth;
@@ -100,25 +101,22 @@ export default function Header() {
 	}, [category]);
 
 	useEffect(() => {
-		// Function to detect clicks outside the buttonRef element
 		function handleClickOutside(event) {
-			// Check if buttonRef exists AND the click target is NOT inside buttonRef
 			if (
 				buttonRef.current &&
-				!buttonRef.current.contains(event.target)
+				!buttonRef.current.contains(event.target) &&
+				dropdownRef.current &&
+				!dropdownRef.current.contains(event.target)
 			) {
-				// Close the dropdown button
 				setOpen(false);
 			}
 		}
-		// Add event listener to detect clicks anywhere on the document
+
 		document.addEventListener("mousedown", handleClickOutside);
-		// Cleanup function: remove the event listener when component unmounts
-		// or when dependencies change, to avoid memory leaks
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
-	}, [setOpen]);
+	}, []);
 
 	return (
 		<header className="bg-gray-900  text-white ">
@@ -173,15 +171,19 @@ export default function Header() {
 						ref={buttonRef}
 						type="button"
 						aria-label={`Search in ${category} category`}
-						className="absolute h-10 px-2 space-x-1  text-gray-500 flex items-center justify-center  border-r border-gray-400 z-10 rounded-sm focus:ring-2 focus:ring-yellow-500 cursor-pointer"
+						className="absolute h-10 px-2 space-x-1  text-gray-500 flex items-center justify-center  border-r border-gray-400 z-10 rounded-sm focus:ring-2 focus:ring-yellow-500 hover:text-black cursor-pointer"
 					>
-						<div className="text-sm">{category}</div>
+						<div className="text-sm ">{category}</div>
+						{/* Arrow down */}
 						<div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray"></div>
 					</button>
 
 					{/* Dropdown menu */}
 					{open && (
-						<div className="absolute w-[210px] h-[400px] top-10 z-10 rounded-xs bg-white border border-gray-500 overflow-y-auto">
+						<div
+							ref={dropdownRef}
+							className="absolute w-[210px] h-[400px] top-10 z-10 rounded-xs bg-white border border-gray-500 overflow-y-auto"
+						>
 							{categories.map((cat) => (
 								<button
 									key={cat}
@@ -295,8 +297,8 @@ export default function Header() {
 									Your Lists
 								</h1>
 								<div className="text-sm space-y-1">
-									<p>Create a List</p>
-									<p>Find a list or Registry</p>
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">Create a List</p>
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">Find a list or Registry</p>
 								</div>
 							</div>
 							<div className=" w-full space-y-2">
@@ -304,25 +306,54 @@ export default function Header() {
 									Your Account
 								</h1>
 								<div className="text-sm space-y-1">
-									{user? (
+									{user ? (
 										<>
-										<p className="hover:underline hover:text-orange-500">Switch account</p>
-										<p onClick={handleLogout} className="cursor-pointer hover:underline hover:text-orange-500">Sign out</p>
+											<p className="hover:underline hover:text-orange-500 cursor-pointer">
+												Switch account
+											</p>
+											<p
+												onClick={handleLogout}
+												className="cursor-pointer hover:underline hover:text-orange-500 mb-3"
+											>
+												Sign out
+											</p>
 										</>
-									):
-									''
-								}
-									<p className="hover:underline hover:text-orange-500" >Account</p>
-									<p className="hover:underline hover:text-orange-500">Orders</p>
-									<p className="hover:underline hover:text-orange-500">Recommendations</p>
-									<p className="hover:underline hover:text-orange-500">Browsing History</p>
-									<p className="hover:underline hover:text-orange-500">Watchlist</p>
-									<p className="hover:underline hover:text-orange-500">Video Purchases & Rentals</p>
-									<p className="hover:underline hover:text-orange-500">Kindle Unlimited</p>
-									<p className="hover:underline hover:text-orange-500">Content & Devices</p>
-									<p className="hover:underline hover:text-orange-500">Subscribe & Save Itemms</p>
-									<p className="hover:underline hover:text-orange-500">Membership & Subscriptions</p>
-									<p className="hover:underline hover:text-orange-500">Music Library</p>
+									) : (
+										""
+									)}
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">
+										Account
+									</p>
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">
+										Orders
+									</p>
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">
+										Recommendations
+									</p> 
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">
+										Browsing History
+									</p>
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">
+										Watchlist
+									</p>
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">
+										Video Purchases & Rentals
+									</p>
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">
+										Kindle Unlimited
+									</p>
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">
+										Content & Devices
+									</p>
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">
+										Subscribe & Save Itemms
+									</p>
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">
+										Membership & Subscriptions
+									</p>
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">
+										Music Library
+									</p>
 								</div>
 							</div>
 						</div>

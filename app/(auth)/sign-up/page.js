@@ -6,10 +6,12 @@ import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
 import { auth, db, googleProvider } from "../../firebase/config";
 import { doc, setDoc } from "firebase/firestore";
 import { signInWithPopup } from "firebase/auth";
+import { useAuth } from "@/app/context/AuthContext ";
 
 
 export default function SignUpPage() {
-	const [createUserWithEmailAndPassword, user, error] =
+	const {user} = useAuth()
+	const [createUserWithEmailAndPassword] =
 		useCreateUserWithEmailAndPassword(auth);
 	const [formData, setFormData] = useState({
 		name: "",
@@ -101,18 +103,12 @@ export default function SignUpPage() {
 	};
 
 
-	// React will re-render when `user` or `error` changes
-	useEffect(() => {
-		if (user) {
-			console.log("User created:", user.user);
-			alert("Account created successfully!");
+	// Use useEffect to check authentication status
+	  useEffect(() => {
+		if(user){
+		  router.push('/')
 		}
-
-		if (error) {
-			console.log("🔥 Raw error object:", error);
-			alert("Signup failed. The email address is already existed.");
-		}
-	}, [user, error]);
+	  })
 	return (
 		<div className="p-10 flex justify-center w-full  ">
 			<div>
