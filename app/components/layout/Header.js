@@ -2,15 +2,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { MapPin, Search, ShoppingCart } from "lucide-react";
-
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/context/AuthContext ";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase/config";
 export default function Header() {
+	const { user } = useAuth();
 	const inputRef = useRef();
 	const [open, setOpen] = useState(false);
 	const [category, setCategory] = useState("All");
 	const buttonRef = useRef();
 	const [categoryWidth, setCategoryWidth] = useState(60);
 	const [languageCode, setLanguageCode] = useState("EN");
-	const [cartQuantity, setCartQuantity] = useState(0)
+	const [cartQuantity, setCartQuantity] = useState(0);
+	const router = useRouter();
 	const categories = [
 		"All Departments",
 		"Arts & Crafts",
@@ -68,9 +73,26 @@ export default function Header() {
 
 	const handleCartQuantity = () => {
 		setCartQuantity((prev) => {
-			return prev + 1
-		})
-	}
+			return prev + 1;
+		});
+	};
+
+	const handleSignin = () => {
+		router.push("/sign-in");
+	};
+	const handleSignup = () => {
+		router.push("/sign-up");
+	};
+
+	const handleLogout = () => {
+  signOut(auth)
+    .then(() => {
+      console.log("User signed out");
+    })
+    .catch((error) => {
+      console.error("Error signing out:", error);
+    });
+}
 
 	useEffect(() => {
 		const width = buttonRef.current.offsetWidth;
@@ -78,16 +100,21 @@ export default function Header() {
 	}, [category]);
 
 	useEffect(() => {
+		// Function to detect clicks outside the buttonRef element
 		function handleClickOutside(event) {
+			// Check if buttonRef exists AND the click target is NOT inside buttonRef
 			if (
 				buttonRef.current &&
 				!buttonRef.current.contains(event.target)
 			) {
+				// Close the dropdown button
 				setOpen(false);
 			}
 		}
-
+		// Add event listener to detect clicks anywhere on the document
 		document.addEventListener("mousedown", handleClickOutside);
+		// Cleanup function: remove the event listener when component unmounts
+		// or when dependencies change, to avoid memory leaks
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
@@ -133,7 +160,10 @@ export default function Header() {
 							aria-label="Search Amazon"
 							className="bg-orange-300 px-3 py-2 ml-auto rounded-r-sm hover:brightness-90"
 						>
-							<Search className="text-black cursor-pointer" size={25} />
+							<Search
+								className="text-black cursor-pointer"
+								size={25}
+							/>
 						</button>
 					</form>
 
@@ -166,24 +196,25 @@ export default function Header() {
 					)}
 				</div>
 				{/* Language */}
-				<div className="flex relative group  items-center cursor-pointer ">
-					<div className="flex space-x-1 hover:border-1  py-3 px-1">
+				<div className="flex relative group  items-center  ">
+					<div className="flex space-x-1 hover:border-1 cursor-pointer py-3 px-1">
 						<Image
 							src="/us-flag.png"
 							alt="Logo"
 							width={20}
 							height={20}
 							priority
-							className="object-contain "
+							className="object-contain w-auto h-auto"
 						/>
 						<div>{languageCode}</div>
 					</div>
 					{/* Arrow Down */}
-					<div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-white"></div>
+					<div className="relative w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-white cursor-pointer">
+						{/* <!-- Triangle at the top --> */}
+						<div className="absolute bg-white h-4 w-4 rotate-45 top-4 -left-2  hidden   group-hover:block "></div>
+					</div>
 					{/* <!-- Tooltip container (hidden by default) --> */}
 					<div className="absolute hidden  group-hover:block top-12 left-0 mt- w-52 bg-white border border-gray-300 rounded shadow-lg z-50">
-						{/* <!-- Triangle at the top --> */}
-						<div className="absolute -top-2 left-12 w-4 h-4 rotate-45 bg-white border-t border-l border-gray-200"></div>
 						{/* <!-- Tooltip content --> */}
 						<div className="p-2 text-black">
 							<h1 className="text-sm">
@@ -219,31 +250,41 @@ export default function Header() {
 				</div>
 
 				{/* Hello Sign in */}
-				<div className="flex relative space-x-1 items-center w-34  cursor-pointer  group">
-					<div className="text-xs leading-none group-hover:border-1 px-1 py-2">
-						Helllo, sign in{" "}
-						<span className="text-sm font-bold">
+				<div className="flex relative space-x-1 items-center    group">
+					<div className="text-xs leading-none group-hover:border-1 px-1 py-2 cursor-pointer">
+						Helllo,{" "}
+						{user ? user.displayName || user.email : `Sign in`}
+						<span className="text-sm font-bold block">
 							Account & Lists
 						</span>
 					</div>
 					{/* Arrow Down */}
-					<div className=" border-l-4 border-t-4 border-r-4 border-l-transparent border-r-transparent "></div>
+					<div className="relative border-l-4 border-t-4 border-r-4 border-l-transparent border-r-transparent cursor-pointer">
+						{/* <!-- Triangle at the top --> */}
+						<div className="absolute bg-white h-4 w-4 rotate-45 top-4 -left-2  hidden   group-hover:block "></div>
+					</div>
 					{/* Tooltip container */}
 					<div className="absolute hidden   group-hover:block  bg-white w-150 h-105 top-12 -left-80 z-30 border border-gray-300 rounded-lg">
-						{/* <!-- Triangle at the top --> */}
-						<div className="absolute bg-white h-4 w-4 rotate-45 -top-2 left-110">
-							d
-						</div>
 						{/* <!-- Tooltip content --> */}
 						<div className="flex w-full ">
-							<button className="text-black text-sm h-8 bg-yellow-300 rounded-md w-55 p-1 mx-auto mt-4">
-								Sign in
-							</button>
+							{user ? (
+								""
+							) : (
+								<button
+									onClick={handleSignin}
+									className="text-black text-sm h-8 bg-yellow-300 rounded-md w-55 p-1 mx-auto mt-4  cursor-pointer"
+								>
+									Sign in
+								</button>
+							)}
 						</div>
 						<div className="flex w-full ">
 							<div className="text-black text-xs mx-auto mt-3">
 								New customer?{" "}
-								<span className="text-blue-500 underline">
+								<span
+									className="text-blue-500 underline cursor-pointer"
+									onClick={handleSignup}
+								>
 									Start here.
 								</span>
 							</div>
@@ -263,17 +304,25 @@ export default function Header() {
 									Your Account
 								</h1>
 								<div className="text-sm space-y-1">
-									<p>Account</p>
-									<p>Orders</p>
-									<p>Recommendations</p>
-									<p>Browsing History</p>
-									<p>Watchlist</p>
-									<p>Video Purchases & Rentals</p>
-									<p>Kindle Unlimited</p>
-									<p>Content & Devices</p>
-									<p>Subscribe & Save Itemms</p>
-									<p>Membership & Subscriptions</p>
-									<p>Music Library</p>
+									{user? (
+										<>
+										<p className="hover:underline hover:text-orange-500">Switch account</p>
+										<p onClick={handleLogout} className="cursor-pointer hover:underline hover:text-orange-500">Sign out</p>
+										</>
+									):
+									''
+								}
+									<p className="hover:underline hover:text-orange-500" >Account</p>
+									<p className="hover:underline hover:text-orange-500">Orders</p>
+									<p className="hover:underline hover:text-orange-500">Recommendations</p>
+									<p className="hover:underline hover:text-orange-500">Browsing History</p>
+									<p className="hover:underline hover:text-orange-500">Watchlist</p>
+									<p className="hover:underline hover:text-orange-500">Video Purchases & Rentals</p>
+									<p className="hover:underline hover:text-orange-500">Kindle Unlimited</p>
+									<p className="hover:underline hover:text-orange-500">Content & Devices</p>
+									<p className="hover:underline hover:text-orange-500">Subscribe & Save Itemms</p>
+									<p className="hover:underline hover:text-orange-500">Membership & Subscriptions</p>
+									<p className="hover:underline hover:text-orange-500">Music Library</p>
 								</div>
 							</div>
 						</div>
@@ -290,19 +339,21 @@ export default function Header() {
 				</div>
 
 				{/* Cart */}
-				<div onClick={handleCartQuantity} className="flex relative  items-center w-20 hover:border-1 px-1 py-2 cursor-pointer">
+				<div
+					onClick={handleCartQuantity}
+					className="flex relative  items-center w-20 hover:border-1 px-1 py-2 cursor-pointer"
+				>
 					<div className="text-xs  flex items-baseline space-x-1">
 						<ShoppingCart size={30} />
 						<div className="relative">
-							<span class="absolute -top-6 left-1 text-lg text-orange-300 text-center">{cartQuantity}</span>
+							<span className="absolute -top-6 left-1 text-lg text-orange-300 text-center">
+								{cartQuantity}
+							</span>
 							<span className="text-sm font-bold">Cart</span>
 						</div>
 					</div>
 				</div>
-
-				
 			</div>
 		</header>
 	);
 }
-
