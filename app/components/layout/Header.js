@@ -136,15 +136,6 @@ export default function Header() {
 					</div>
 
 					{/* Deliver To */}
-					{/* <div className="flex relative space-x-1 items-center w-28 border border-transparent  hover:border-white p-1 cursor-pointer">
-						<MapPin size={40} className=" " />
-						<div className="text-xs leading-none">
-							Deliver to{" "}
-							<span className="text-sm font-bold">
-								Philippines
-							</span>
-						</div>
-					</div> */}
 					<div className="text-xs relative w-[110px] leading-none border border-transparent  hover:border-white px-1 py-2 cursor-pointer">
 						<MapPin size={20} className="absolute top-4 left-1 " />
 						<div className="ml-5">Deliver to</div>

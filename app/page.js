@@ -7,15 +7,12 @@ import ProductCarousel from "./components/home/ProductCarousel";
 export default function Home() {
 	const { user, loading } = useAuth();
 
-
-  // Use useEffect to check authentication status
-  useEffect(() => {
-    
-  })
+	// Use useEffect to check authentication status
+	useEffect(() => {});
 	return (
 		<div className=" ">
 			<Header />
-			<ProductCarousel/>
+			<ProductCarousel />
 		</div>
 	);
 }
