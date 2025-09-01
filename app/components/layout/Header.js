@@ -129,7 +129,7 @@ export default function Header() {
 						width={80}
 						height={40}
 						priority
-						className="object-contain h-auto w-auto"
+						className="object-contain"
 					/>
 				</div>
 
@@ -206,7 +206,7 @@ export default function Header() {
 							width={20}
 							height={20}
 							priority
-							className="object-contain w-auto h-auto"
+							className="object-contain"
 						/>
 						<div>{languageCode}</div>
 					</div>
@@ -268,37 +268,61 @@ export default function Header() {
 					{/* Tooltip container */}
 					<div className="absolute hidden   group-hover:block  bg-white w-150 h-105 top-12 -left-80 z-30 border border-gray-300 rounded-lg">
 						{/* <!-- Tooltip content --> */}
-						<div className="flex w-full ">
-							{user ? (
-								""
-							) : (
-								<button
-									onClick={handleSignin}
-									className="text-black text-sm h-8 bg-yellow-300 rounded-md w-55 p-1 mx-auto mt-4  cursor-pointer"
-								>
-									Sign in
-								</button>
-							)}
-						</div>
-						<div className="flex w-full ">
-							<div className="text-black text-xs mx-auto mt-3">
-								New customer?{" "}
-								<span
-									className="text-blue-500 underline cursor-pointer"
-									onClick={handleSignup}
-								>
-									Start here.
-								</span>
+						{user ? (
+							<div className="flex  items-center justify-between px-8 py-7 text-black">
+								<div className="flex h-10 items-center">
+									<Image
+										src={user.photoURL}
+										width={40}
+										height={40}
+										alt="profile pic"
+										priority
+										className="object-contain rounded-full"
+									/>
+									<div className="ml-3 ">
+										<h1 className=" font-semibold text-md">{user.displayName || user.email}</h1>
+										<p className="text-sm text-gray-500">Account holder</p>
+									</div>
+								</div>
+								<div className="text-blue-500 text-sm font-semibold pb-1  cursor-pointer">
+									<span className="hover:border-b">Manage Profiles</span> <span>{`>`}</span> 
+								</div>
 							</div>
-						</div>
-						<div className="text-gray-600  flex px-5 justify-around w-full mt-6">
+						) : (
+							<>
+								<div className="flex w-full ">
+									<button
+										onClick={handleSignin}
+										className="text-black text-sm h-8 bg-yellow-300 rounded-md w-55 p-1 mx-auto mt-4  cursor-pointer"
+									>
+										Sign in
+									</button>
+								</div>
+								<div className="flex w-full ">
+									<div className="text-black text-xs mx-auto mt-3">
+										New customer?{" "}
+										<span
+											className="text-blue-500 underline cursor-pointer"
+											onClick={handleSignup}
+										>
+											Start here.
+										</span>
+									</div>
+								</div>
+							</>
+						)}
+						<div className="text-gray-600  flex px-5 justify-around w-full ">
 							<div className="w-full space-y-2">
 								<h1 className="font-bold text-black">
 									Your Lists
 								</h1>
 								<div className="text-sm space-y-1">
-									<p className="hover:underline hover:text-orange-500 cursor-pointer">Create a List</p>
-									<p className="hover:underline hover:text-orange-500 cursor-pointer">Find a list or Registry</p>
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">
+										Create a List
+									</p>
+									<p className="hover:underline hover:text-orange-500 cursor-pointer">
+										Find a list or Registry
+									</p>
 								</div>
 							</div>
 							<div className=" w-full space-y-2">
@@ -329,7 +353,7 @@ export default function Header() {
 									</p>
 									<p className="hover:underline hover:text-orange-500 cursor-pointer">
 										Recommendations
-									</p> 
+									</p>
 									<p className="hover:underline hover:text-orange-500 cursor-pointer">
 										Browsing History
 									</p>
