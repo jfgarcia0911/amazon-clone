@@ -3,7 +3,8 @@ import Image from "next/image";
 import Header from "./components/layout/Header";
 import { useAuth } from "./context/AuthContext ";
 import { useEffect } from "react";
-import ProductCarousel from "./components/home/ProductCarousel";
+import Hero from "./components/home/Hero";
+
 export default function Home() {
 	const { user, loading } = useAuth();
 
@@ -12,7 +13,7 @@ export default function Home() {
 	return (
 		<div className=" ">
 			<Header />
-			<ProductCarousel />
+			<Hero/>
 		</div>
 	);
 }

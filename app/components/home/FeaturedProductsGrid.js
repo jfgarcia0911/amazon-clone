@@ -67,17 +67,17 @@ const productGallery = [
 
 export default function FeaturedProductsGrid() {
 	return (
-		<div className="relative w-full  min-h-[300px] font-sans">
+		<div className="relative w-full  min-h-[600px] font-sans">
 			<div className="absolute -top-89 left-0 w-full ">
 				<div className="max-w-380 mx-auto ">
-					<div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 px-5">
+					<div className="grid  grid-cols-3 xl:grid-cols-4 gap-5 px-5   ">
 						{productGallery.map((prod, index) => {
 							return (
 								<div
 									key={index}
-									className="bg-white h-105 p-5 flex flex-col"
+									className={`bg-white h-105 p-5 flex flex-col ${index === productGallery.length -2 && 'hidden'} ${index === productGallery.length -1 && 'hidden'} xl:flex `}
 								>
-									<div className="text-xl font-[700] pb-2">
+									<div className="text-xl font-[700] pb-2 truncate">
 										{prod.title}
 									</div>
 									<div
@@ -101,14 +101,14 @@ export default function FeaturedProductsGrid() {
 															className="object-cover flex-shrink-0"
 														/>
 													</div>
-													<div className="text-sm">
+													<div className="text-sm truncate">
 														{img.link}
 													</div>
 												</div>
 											);
 										})}
 									</div>
-									<div className="mt-auto pt-5 text-sm text-blue-500 hover:text-blue-800 cursor-pointer">
+									<div className="truncate mt-auto pt-5 text-sm text-blue-500 hover:text-blue-800 cursor-pointer">
 										{prod.link}
 									</div>
 								</div>
@@ -116,6 +116,7 @@ export default function FeaturedProductsGrid() {
 						})}
 					</div>
 				</div>
+
 			</div>
 		</div>
 	);
