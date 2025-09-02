@@ -57,7 +57,7 @@ export default function ProductGallery() {
 	};
 
 	return (
-		<div className="w-full  -mt-24">
+		<div className="w-full  -mt-24 mb-20">
 			<div className="max-w-[1520px] w-full  mx-auto">
 				<div className="p-10 h-70 relative group">
 					<div className="text-xl font-bold">

@@ -67,7 +67,7 @@ const productGallery = [
 
 export default function FeaturedProductsGrid() {
 	return (
-		<div className="relative w-full  min-h-[600px] font-sans">
+		<div className="relative w-full  min-h-[600px] font-sans ">
 			<div className="absolute -top-89 left-0 w-full ">
 				<div className="max-w-380 mx-auto ">
 					<div className="grid  grid-cols-3 xl:grid-cols-4 gap-5 px-5   ">
