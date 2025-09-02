@@ -185,7 +185,6 @@ export default function Footer() {
 						Movies, TV <span className="block">& Celebrities</span>
 					</p>
 				</div>
-				IMDb
 			</div>
 			{/* Fifth layer */}
 			<div className="flex justify-center space-x-5 bg-gray-900 brightness-70">
