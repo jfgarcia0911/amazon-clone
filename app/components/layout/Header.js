@@ -7,6 +7,7 @@ import { useAuth } from "@/app/context/AuthContext ";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import SecondaryNav from "./SecondaryNav";
+import Link from "next/link";
 export default function Header() {
 	const { user } = useAuth();
 	const inputRef = useRef();
@@ -356,6 +357,9 @@ export default function Header() {
 										) : (
 											""
 										)}
+										{user? <Link href={'/products/add'} className="hover:underline hover:text-orange-500 cursor-pointer">
+											Add product
+										</Link> : ''}
 										<p className="hover:underline hover:text-orange-500 cursor-pointer">
 											Account
 										</p>

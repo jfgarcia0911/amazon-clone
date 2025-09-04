@@ -11,7 +11,7 @@ export default function Footer() {
 			{/* First layer */}
 			<div
 				onClick={scrollTop}
-				className="bg-gray-700 hover:opacity-90 py-4 text-center"
+				className="bg-gray-700 hover:opacity-90 py-4 text-center cursor-pointer"
 			>
 				Back to top
 			</div>{" "}

@@ -8,9 +8,8 @@ import { doc, setDoc } from "firebase/firestore";
 import { signInWithPopup } from "firebase/auth";
 import { useAuth } from "@/app/context/AuthContext ";
 
-
 export default function SignUpPage() {
-	const {user} = useAuth()
+	const { user } = useAuth();
 	const [createUserWithEmailAndPassword] =
 		useCreateUserWithEmailAndPassword(auth);
 	const [formData, setFormData] = useState({
@@ -65,7 +64,7 @@ export default function SignUpPage() {
 		return Object.keys(newError).length === 0;
 	};
 
-    //Used for email and password sign in
+	//Used for email and password sign in
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 
@@ -78,7 +77,7 @@ export default function SignUpPage() {
 					formData.email,
 					formData.password
 				);
-				console.log(res)
+				console.log(res);
 
 				if (res) {
 					//Save user to Firestore
@@ -87,38 +86,46 @@ export default function SignUpPage() {
 						displayName: formData.name,
 						email: formData.email,
 						photoURL: "",
+						isAdmin: false,
 						provider: "email",
 						createdAt: new Date(),
 					});
-					console.log("User created and saved to Firestore:", res.user);
-					alert("Account created successfully! Your data has been saved.");
-					router.push('/sign-in')
+					console.log(
+						"User created and saved to Firestore:",
+						res.user
+					);
+					alert(
+						"Account created successfully! Your data has been saved."
+					);
+					router.push("/sign-in");
 				}
 			} catch (error) {
-				console.error("Signup error:", error)
+				console.error("Signup error:", error);
 			} finally {
 				setIsSubmitting(false);
 			}
 		}
 	};
 
-
 	// Use useEffect to check authentication status
-	  useEffect(() => {
-		if(user){
-		  router.push('/')
+	useEffect(() => {
+		if (user) {
+			router.push("/");
 		}
-	  })
+	});
 	return (
 		<div className="p-10 flex justify-center w-full  ">
 			<div>
-				<Image
-					alt="amazon logo"
-					src={`/amazon.png`}
-					width={100}
-					height={100}
-					className="mx-auto mb-5 w-auto h-auto"
-				/>
+				<div className="relative w-40 mx-auto">
+					<Image
+						alt="amazon logo"
+						src={`/amazon.png`}
+						width={50}
+						height={50}
+						priority
+						className="mx-auto mb-5 w-auto h-auto"
+					/>
+				</div>
 
 				<div className="border border-gray-300 rounded-xl w-90  p-5">
 					<h1 className="text-3xl text-center mb-3">

@@ -92,6 +92,7 @@ export default function SignInPage() {
 					displayName: user.displayName,
 					email: user.email,
 					photoURL: user.photoURL,
+					isAdmin: false,
 					provider: "google",
 					createdAt: new Date(),
 				});
@@ -122,14 +123,16 @@ export default function SignInPage() {
 	return (
 		<div className="p-10 flex justify-center w-full  ">
 			<div>
-				<Image
+				<div className="relative w-40 mx-auto">
+					<Image
 					alt="amazon logo"
 					src={`/amazon.png`}
-					width={100}
-					height={100}
+					width={50}
+					height={50}
 					priority
 					className="mx-auto mb-5 w-auto h-auto"
 				/>
+				</div>
 				<div className="border border-gray-300 rounded-xl w-90  p-5">
 					<h1 className="text-3xl text-center mb-3">Sign in</h1>
 					<form onSubmit={handleSubmit}>
