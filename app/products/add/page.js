@@ -1,19 +1,26 @@
 "use client";
 
-import Header from "@/app/components/layout/Header";
-import React, { useState } from "react";
+import Header from "../../components/layout/Header";
+import React, { useRef, useState } from "react";
+import { db } from "../../firebase/config";
+import { doc, setDoc, collection, addDoc } from "firebase/firestore";
+import { useAuth } from "../../context/AuthContext ";
+import { useRouter } from "next/navigation";
 
 export default function AddProduct() {
-	const [images, setImages] = useState([]);
+	const { user } = useAuth();
+	const mainImageRef = useRef();
+	const router = useRouter();
+	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [errors, setErrors] = useState({});
 	const [formData, setFormData] = useState({
 		name: "",
 		description: "",
 		attributes: {
 			brand: "",
-			color: "Black",
-			model: "WH-1000XM4",
-			material: "Plastic",
+			color: "",
+			model: "",
+			material: "",
 		},
 		category: "",
 		subcategory: "",
@@ -55,7 +62,6 @@ export default function AddProduct() {
 			setErrors((prevErrors) => ({ ...prevErrors, [id]: "" }));
 		}
 	};
-
 	const handleChangePricing = (e) => {
 		const { id, value } = e.target;
 		setFormData((prevData) => ({
@@ -69,37 +75,92 @@ export default function AddProduct() {
 			setErrors((prevErrors) => ({ ...prevErrors, [id]: "" }));
 		}
 	};
-	const handleChangeImages = (e) => {
+	const handleChangeImages = async (e) => {
 		const { id, value } = e.target;
-		setFormData((prevData) => ({
-			...prevData,
-			images: {
-				...prevData.images,
-				[id]: value,
-			},
-		}));
+		const file = e.target.files[0];
+		if (file) {
+			// Post image to Pinata and get Url
+			const data = new FormData();
+			data.set("file", file);
+			const response = await fetch("/api/files", {
+				method: "POST",
+				body: data,
+			});
+
+			const imgUrl = await response.json();
+			console.log(imgUrl);
+
+			setFormData((prevData) => ({
+				...prevData,
+				images: {
+					...prevData.images,
+					[id]: imgUrl,
+				},
+			}));
+		} else {
+			setFormData((prevData) => ({
+				...prevData,
+				images: {
+					...prevData.images,
+					[id]: "",
+				},
+			}));
+		}
 		if (errors[id]) {
 			setErrors((prevErrors) => ({ ...prevErrors, [id]: "" }));
 		}
-		const file = e.target.files[0];
-		console.log(file);
 	};
 
-	const handleAddImages = (e, index) => {
-		setFormData((prev) => {
-			const newImages = [...prev.images.additionalImages];
-			newImages[index] = e.target.value; // replace or set at index
-			return {
-				...prev,
-				images: {
-					...prev.images,
-					additionalImages: newImages,
-				},
-			};
-		});
+	const handleChangeAddImages = async (e, index) => {
+		// setIsPosting(true);
+		const file = e.target.files[0];
+		if (file) {
+			// Post image to Pinata and get Url
+			const data = new FormData();
+			data.set("file", file);
+			const response = await fetch("/api/files", {
+				method: "POST",
+				body: data,
+			});
+
+			const imgUrl = await response.json();
+			console.log(imgUrl);
+
+			setFormData((prev) => {
+				const newImages = [...prev.images.additionalImages];
+				newImages[index] = imgUrl; // replace or set at index
+				return {
+					...prev,
+					images: {
+						...prev.images,
+						additionalImages: newImages,
+					},
+				};
+			});
+		} else {
+			setFormData((prev) => {
+				const newImages = [...prev.images.additionalImages];
+				newImages[index] = ""; // replace or set at index
+				return {
+					...prev,
+					images: {
+						...prev.images,
+						additionalImages: newImages,
+					},
+				};
+			});
+		}
+
+		// Clear error for this specific input
+		const errorKey = `additionalImages-${index}`;
+		if (errors[errorKey]) {
+			setErrors((prevErrors) => ({
+				...prevErrors,
+				[errorKey]: "",
+			}));
+		}
 	};
-	const addImages = (e) => {
-		// setImages([...images, ""]);
+	const addImageInput = (e) => {
 		setFormData((prev) => ({
 			...prev,
 			images: {
@@ -107,10 +168,9 @@ export default function AddProduct() {
 				additionalImages: [...prev.images.additionalImages, ""],
 			},
 		}));
-		console.log(123);
 	};
 
-	const removeImages = (e) => {
+	const removeImageInput = (e) => {
 		setFormData((prev) => ({
 			...prev,
 			images: {
@@ -143,33 +203,108 @@ export default function AddProduct() {
 		if (!formData.stockQuantity || formData.stockQuantity < 0) {
 			newErrors.stockQuantity = "Stock quantity cannot be negative";
 		}
-		if (!formData.images.mainImage.trim()) {
+		if (!formData.images.mainImage) {
 			newErrors.mainImage = "Main image is required";
 		}
-
+		if (
+			formData.images.additionalImages.some((img) => !img) // one of them is empty
+		) {
+			newErrors.additionalImages = "Removed or provide additional images";
+		}
 		setErrors(newErrors);
 		return Object.keys(newErrors).length === 0; // Return true if no errors
 	};
-	const handleSubmit = (e) => {
+	// Submit form to Firestore
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (validateForm()) {
+			setIsSubmitting(true);
 			// Handle form submission logic here
 			console.log("Form submitted:", formData);
+			// TODO: Handle form submission (e.g., send data to API)
+			try {
+				//Save products to Firestore
+				await addDoc(collection(db, "amazon-products"), {
+					userId: user.uid,
+					name: formData.name,
+					description: formData.description,
+					attributes: {
+						brand: formData.attributes.brand,
+						color: formData.attributes.color,
+						model: formData.attributes.model,
+						material: formData.attributes.material,
+					},
+					category: formData.category,
+					subcategory: formData.subcategory,
+					images: {
+						mainImage: formData.images.mainImage,
+						additionalImages: formData.images.additionalImages,
+					},
+					pricing: {
+						currency: "USD",
+						costPrice: formData.pricing.costPrice,
+					},
+					stockQuantity: formData.stockQuantity,
+					timestamps: {
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					},
+				});
+				console.log("Product created with ID:", user.uid);
+				alert("Product added successfully!");
+				router.push("/");
+				// ✅ Reset everything after submit
+				setFormData({
+					name: "",
+					description: "",
+					attributes: {
+						brand: "",
+						color: "",
+						model: "",
+						material: "",
+					},
+					category: "",
+					subcategory: "",
+					images: {
+						mainImage: "",
+						additionalImages: [],
+					},
+					pricing: {
+						currency: "USD",
+						costPrice: 0,
+					},
+					stockQuantity: 0,
+					timestamps: {
+						createdAt: new Date(),
+						updatedAt: new Date(),
+					},
+				});
+			} catch (error) {
+				console.error("Error adding product:", error);
+				alert("Error adding product. Please try again.");
+			} finally {
+				setIsSubmitting(false);
+			}
+
+			console.log("Form submitted:", formData);
+
+			setErrors({});
 		} else {
 			console.log("Form validation failed:", errors);
 		}
 	};
+
 	return (
 		<div>
 			<Header />
 
-			<div
-				onSubmit={handleSubmit}
-				className="w-full flex justify-center items-center mt-10"
-			>
+			<div className="w-full flex justify-center items-center mt-10">
 				<div className="w-300 ">
 					<h2>Add New Product</h2>
-					<form className="relative px-20 py-5 space-y-10 border border-gray-300 rounded-md">
+					<form
+						onSubmit={handleSubmit}
+						className="relative px-20 py-5 space-y-10 border border-gray-300 rounded-md"
+					>
 						{/* Name */}
 						<div className="flex justify-end space-x-3 mb-3">
 							<label className="text-nowrap " htmlFor="name">
@@ -202,7 +337,7 @@ export default function AddProduct() {
 							>
 								Product Description:
 							</label>
-							<input
+							<textarea
 								type="text"
 								id="description"
 								value={formData.description}
@@ -353,9 +488,10 @@ export default function AddProduct() {
 								Main Image:
 							</label>
 							<input
+								ref={mainImageRef}
 								type="file"
 								id="mainImage"
-								value={formData.images.mainImage}
+								// value={formData.images.mainImage}
 								onChange={handleChangeImages}
 								className={`border border-gray-300 outline-none rounded-md p-2 w-200 mb-3 ${
 									errors.mainImage
@@ -375,14 +511,7 @@ export default function AddProduct() {
 						<div className="justify-end flex mb-6 -mt-6 space-x-3">
 							<button
 								type="button"
-								onClick={removeImages}
-								className="px-4 py-2 bg-red-500 text-white rounded-md cursor-pointer"
-							>
-								- Remove
-							</button>
-							<button
-								type="button"
-								onClick={addImages}
+								onClick={addImageInput}
 								className="px-4 py-2 bg-blue-500 text-white rounded-md cursor-pointer"
 							>
 								+ Add another image
@@ -403,13 +532,8 @@ export default function AddProduct() {
 									<input
 										type="file"
 										id={`additionalImages`}
-										value={
-											formData.images.additionalImages[
-												index
-											]
-										}
 										onChange={(e) =>
-											handleAddImages(e, index)
+											handleChangeAddImages(e, index)
 										}
 										className={`border border-gray-300 outline-none rounded-md p-2 w-200 mb-3 ${
 											errors.additionalImages
@@ -420,14 +544,30 @@ export default function AddProduct() {
 								</div>
 							);
 						})}
-
+						<div className="ml-60 h-2 -mt-5">
+							{errors.additionalImages && (
+								<p className="text-red-500 text-sm">
+									{errors.additionalImages}
+								</p>
+							)}
+						</div>
+						{/* Removed input */}
+						<div className="justify-end flex mb-6 mt-4 space-x-3">
+							<button
+								type="button"
+								onClick={removeImageInput}
+								className="px-4 py-2 bg-red-500 text-white rounded-md cursor-pointer"
+							>
+								- Remove
+							</button>
+						</div>
 						{/* Form fields for product details */}
 						<div className="text-center">
 							<button
 								type="submit"
 								className="bg-blue-500 text-white rounded-md p-2 w-100 mt-5 cursor-pointer hover:bg-blue-600"
 							>
-								Add Product
+								{isSubmitting ? "Submitting..." : "Submit"}
 							</button>
 						</div>
 					</form>

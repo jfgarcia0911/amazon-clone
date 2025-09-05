@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { MapPin, Search, ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/app/context/AuthContext ";
+import { useAuth } from "../../context/AuthContext ";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import SecondaryNav from "./SecondaryNav";
