@@ -10,12 +10,14 @@ import { useRouter } from "next/navigation";
 export default function AddProduct() {
 	const { user } = useAuth();
 	const mainImageRef = useRef();
+	const inputDetailsRef = useRef();
 	const router = useRouter();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [errors, setErrors] = useState({});
 	const [formData, setFormData] = useState({
 		name: "",
-		description: "",
+		description: [],
+		// description: "",
 		attributes: {
 			brand: "",
 			color: "",
@@ -160,6 +162,23 @@ export default function AddProduct() {
 			}));
 		}
 	};
+
+	const handleConfirmDescription = (e) => {
+		e.preventDefault();
+		const detail = inputDetailsRef.current.value;
+
+		if (detail.trim()) {
+			setFormData((prev) => ({
+				...prev,
+				description: [...prev.description, detail.trim()],
+			}));
+		}
+		if(errors.description){
+			setErrors((prevErrors) => ({ ...prevErrors, description: "" }));
+		}
+		console.log("Detail confirmed:", formData.description);
+		inputDetailsRef.current.value = "";
+	};
 	const addImageInput = (e) => {
 		setFormData((prev) => ({
 			...prev,
@@ -185,7 +204,7 @@ export default function AddProduct() {
 		if (!formData.name.trim()) {
 			newErrors.name = "Product name is required";
 		}
-		if (!formData.description.trim()) {
+		if (!formData.description.length) {
 			newErrors.description = "Product description is required";
 		}
 		if (!formData.attributes.brand.trim()) {
@@ -301,6 +320,7 @@ export default function AddProduct() {
 			<div className="w-full flex justify-center items-center mt-10">
 				<div className="w-300 ">
 					<h2>Add New Product</h2>
+					{/* Form fields for product details */}
 					<form
 						onSubmit={handleSubmit}
 						className="relative px-20 py-5 space-y-10 border border-gray-300 rounded-md"
@@ -330,26 +350,45 @@ export default function AddProduct() {
 							)}
 						</div>
 						{/* Description */}
-						<div className="flex justify-end space-x-3 mb-3">
-							<label
-								className="text-nowrap "
-								htmlFor="description"
-							>
-								Product Description:
-							</label>
-							<textarea
-								type="text"
-								id="description"
-								value={formData.description}
-								onChange={handleChange}
-								className={`border border-gray-300 outline-none rounded-md p-2 w-200 mb-3 ${
-									errors.description
-										? "border-red-500 focus:border-red-500"
-										: "focus:border-blue-500"
-								}`}
-							/>
+						<div className=" space-x-3 mb-9">
+							<div className="justify-end flex space-x-6">
+								<label
+									className="text-nowrap "
+									htmlFor="details"
+								>
+									Product Description:
+								</label>
+								<div className="w-193 ">
+									<ul className="list-disc">
+										{formData.description.map(
+											(detail, index) => (
+												<li key={index}>{detail}</li>
+											)
+										)}
+									</ul>
+								</div>
+							</div>
+							<div className="justify-end flex items-center space-x-3 mt-2">
+								<input
+									type="text"
+									id="details"
+									ref={inputDetailsRef}
+									className={`border ml-auto  border-gray-300 outline-none rounded-md p-2 w-178 mb-3 ${
+										errors.description
+											? "border-red-500 focus:border-red-500"
+											: "focus:border-blue-500"
+									}`}
+								/>
+								<button
+									onClick={handleConfirmDescription}
+									type="button"
+									className="py-2 px-3 -mt-3 bg-blue-400 rounded-md cursor-pointer"
+								>
+									confirm
+								</button>
+							</div>
 						</div>
-						<div className="ml-60 h-2 -mt-5">
+						<div className="ml-60 h-2 -mt-11 ">
 							{errors.description && (
 								<p className="text-red-500 text-sm">
 									{errors.description}
@@ -552,7 +591,7 @@ export default function AddProduct() {
 							)}
 						</div>
 						{/* Removed input */}
-						<div className="justify-end flex mb-6 mt-4 space-x-3">
+						<div className="justify-end flex mb-6  space-x-3 -mt-8">
 							<button
 								type="button"
 								onClick={removeImageInput}
@@ -561,7 +600,7 @@ export default function AddProduct() {
 								- Remove
 							</button>
 						</div>
-						{/* Form fields for product details */}
+						{/* Submit Button */}
 						<div className="text-center">
 							<button
 								type="submit"
