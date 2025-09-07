@@ -1,7 +1,7 @@
 "use client";
 
 import Header from "../../components/layout/Header";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { db } from "../../firebase/config";
 import { doc, setDoc, collection, addDoc } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext ";
@@ -10,9 +10,44 @@ import { useRouter } from "next/navigation";
 export default function AddProduct() {
 	const { user } = useAuth();
 	const mainImageRef = useRef();
+	const buttonDropdownRef = useRef();
+	const dropdownRef = useRef();
 	const inputDetailsRef = useRef();
 	const router = useRouter();
+
+	const [category, setCategory] = useState("All");
+	const [open, setOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const categories = [
+		"All Departments",
+		"Arts & Crafts",
+		"Automotive",
+		"Baby",
+		"Beauty & Personal Care",
+		"Books",
+		"Boy's Fashion",
+		"Computers",
+		"Deals",
+		"Digital Music",
+		"Electronics",
+		"Girl's Fashion",
+		"Health & Household",
+		"Home Kitchen",
+		"Industrial Scientific",
+		"Kindle Store",
+		"Luggage",
+		"Men's Fashion",
+		"Movies & TV",
+		"Music, CD's & Vinyl",
+		"Pet Supplies",
+		"Prime Video",
+		"Software",
+		"Sports Outdoor",
+		"Tools & Home Improvement",
+		"Toys and Games",
+		"Video Games",
+		"Women's Fashion",
+	];
 	const [errors, setErrors] = useState({});
 	const [formData, setFormData] = useState({
 		name: "",
@@ -24,7 +59,7 @@ export default function AddProduct() {
 			model: "",
 			material: "",
 		},
-		category: "",
+		category: "All",
 		subcategory: "",
 		images: {
 			mainImage: "",
@@ -113,6 +148,15 @@ export default function AddProduct() {
 		}
 	};
 
+	const handleSelect = (cat) => {
+		setFormData((prev) => ({ ...prev, category: cat }));
+		if (errors.category) {
+			setErrors((prevErrors) => ({ ...prevErrors, category: "" }));
+		}
+
+		setOpen(false);
+	};
+
 	const handleChangeAddImages = async (e, index) => {
 		// setIsPosting(true);
 		const file = e.target.files[0];
@@ -173,7 +217,7 @@ export default function AddProduct() {
 				description: [...prev.description, detail.trim()],
 			}));
 		}
-		if(errors.description){
+		if (errors.description) {
 			setErrors((prevErrors) => ({ ...prevErrors, description: "" }));
 		}
 		console.log("Detail confirmed:", formData.description);
@@ -219,7 +263,7 @@ export default function AddProduct() {
 		if (!formData.pricing.costPrice || formData.pricing.costPrice <= 0) {
 			newErrors.costPrice = "Cost price must be greater than zero";
 		}
-		if (!formData.stockQuantity || formData.stockQuantity < 0) {
+		if (formData.stockQuantity < 0) {
 			newErrors.stockQuantity = "Stock quantity cannot be negative";
 		}
 		if (!formData.images.mainImage) {
@@ -275,7 +319,7 @@ export default function AddProduct() {
 				// ✅ Reset everything after submit
 				setFormData({
 					name: "",
-					description: "",
+					description: [],
 					attributes: {
 						brand: "",
 						color: "",
@@ -312,6 +356,24 @@ export default function AddProduct() {
 			console.log("Form validation failed:", errors);
 		}
 	};
+
+	useEffect(() => {
+			function handleClickOutside(event) {
+				if (
+					buttonDropdownRef.current &&
+					!buttonDropdownRef.current.contains(event.target) &&
+					dropdownRef.current &&
+					!dropdownRef.current.contains(event.target)
+				) {
+					setOpen(false);
+				}
+			}
+	
+			document.addEventListener("mousedown", handleClickOutside);
+			return () => {
+				document.removeEventListener("mousedown", handleClickOutside);
+			};
+		}, []);
 
 	return (
 		<div>
@@ -358,17 +420,22 @@ export default function AddProduct() {
 								>
 									Product Description:
 								</label>
-								<div className="w-193 ">
+								<div className="w-193 mb-10 ">
 									<ul className="list-disc">
 										{formData.description.map(
 											(detail, index) => (
-												<li key={index}>{detail}</li>
+												<li
+													key={index}
+													className="text-sm"
+												>
+													{detail}
+												</li>
 											)
 										)}
 									</ul>
 								</div>
 							</div>
-							<div className="justify-end flex items-center space-x-3 mt-2">
+							<div className="justify-end flex items-center space-x-3 -mt-9">
 								<input
 									type="text"
 									id="details"
@@ -420,21 +487,51 @@ export default function AddProduct() {
 							)}
 						</div>
 						{/* Category */}
+						{/* Dropdown Button */}
 						<div className="flex justify-end space-x-3 mb-3">
-							<label className="text-nowrap " htmlFor="category">
+							<div className="text-nowrap relative flex ">
 								Category:
-							</label>
-							<input
-								type="text"
-								id="category"
-								value={formData.category}
-								onChange={handleChange}
-								className={`border border-gray-300 outline-none rounded-md p-2 w-200 mb-3 ${
-									errors.category
-										? "border-red-500 focus:border-red-500"
-										: "focus:border-blue-500"
-								}`}
-							/>
+								{/* Button with proper ARIA attributes */}
+								<button
+									ref={buttonDropdownRef}
+									onClick={() => setOpen(!open)}
+									type="button"
+									aria-haspopup="true"
+									aria-expanded={open}
+									className="flex items-center justify-between px-2 py-2  font-medium  ml-3 w-200 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+								>
+									<span>{formData.category}</span>
+									{/* Arrow down */}
+									<div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray"></div>
+									{/* Chevron icon that rotates when open */}
+								</button>
+								{/* Dropdown menu */}
+								{open && (
+									<div
+										ref={dropdownRef}
+										className="absolute top-10 right-0 z-10 w-full mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+										role="menu"
+										aria-orientation="vertical"
+										tabIndex={-1}
+									>
+										<div className="py-1 max-h-60 overflow-y-auto">
+											{categories.map((category) => (
+												<button
+													key={category}
+													onClick={() =>
+														handleSelect(category)
+													}
+													className={`block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 `}
+													role="menuitem"
+													tabIndex={0}
+												>
+													{category}
+												</button>
+											))}
+										</div>
+									</div>
+								)}
+							</div>
 						</div>
 						<div className="ml-60 h-2 -mt-5">
 							{errors.category && (
@@ -600,6 +697,7 @@ export default function AddProduct() {
 								- Remove
 							</button>
 						</div>
+
 						{/* Submit Button */}
 						<div className="text-center">
 							<button
