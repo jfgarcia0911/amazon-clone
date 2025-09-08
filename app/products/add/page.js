@@ -3,7 +3,7 @@
 import Header from "../../components/layout/Header";
 import React, { useRef, useState, useEffect } from "react";
 import { db } from "../../firebase/config";
-import { doc, setDoc, collection, addDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext ";
 import { useRouter } from "next/navigation";
 
@@ -13,9 +13,9 @@ export default function AddProduct() {
 	const buttonDropdownRef = useRef();
 	const dropdownRef = useRef();
 	const inputDetailsRef = useRef();
+	const inputKeywordsRef = useRef();
 	const router = useRouter();
 
-	const [category, setCategory] = useState("All");
 	const [open, setOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const categories = [
@@ -52,7 +52,6 @@ export default function AddProduct() {
 	const [formData, setFormData] = useState({
 		name: "",
 		description: [],
-		// description: "",
 		attributes: {
 			brand: "",
 			color: "",
@@ -60,7 +59,7 @@ export default function AddProduct() {
 			material: "",
 		},
 		category: "All",
-		subcategory: "",
+		searchKeywords: [],
 		images: {
 			mainImage: "",
 			additionalImages: [],
@@ -223,6 +222,22 @@ export default function AddProduct() {
 		console.log("Detail confirmed:", formData.description);
 		inputDetailsRef.current.value = "";
 	};
+	const handleConfirmKeywords = (e) => {
+		e.preventDefault();
+		const key = inputKeywordsRef.current.value;
+
+		if (key.trim()) {
+			setFormData((prev) => ({
+				...prev,
+				searchKeywords: [...prev.searchKeywords, key.trim()],
+			}));
+		}
+		if (errors.searchKeywords) {
+			setErrors((prevErrors) => ({ ...prevErrors, searchKeywords: "" }));
+		}
+		console.log("Detail confirmed:", formData.searchKeywords);
+		inputKeywordsRef.current.value = "";
+	};
 	const addImageInput = (e) => {
 		setFormData((prev) => ({
 			...prev,
@@ -254,11 +269,11 @@ export default function AddProduct() {
 		if (!formData.attributes.brand.trim()) {
 			newErrors.brand = "Product brand is required";
 		}
-		if (!formData.category.trim()) {
-			newErrors.category = "Product category is required";
+		if (formData.category === "All") {
+			newErrors.category = "Choose a category";
 		}
-		if (!formData.subcategory.trim()) {
-			newErrors.subcategory = "Product sub-category is required";
+		if (!formData.searchKeywords.length) {
+			newErrors.searchKeywords = "Atleast one search keywords are required";
 		}
 		if (!formData.pricing.costPrice || formData.pricing.costPrice <= 0) {
 			newErrors.costPrice = "Cost price must be greater than zero";
@@ -298,7 +313,7 @@ export default function AddProduct() {
 						material: formData.attributes.material,
 					},
 					category: formData.category,
-					subcategory: formData.subcategory,
+					searchKeywords: formData.searchKeywords,
 					images: {
 						mainImage: formData.images.mainImage,
 						additionalImages: formData.images.additionalImages,
@@ -327,7 +342,7 @@ export default function AddProduct() {
 						material: "",
 					},
 					category: "",
-					subcategory: "",
+					searchKeywords: [],
 					images: {
 						mainImage: "",
 						additionalImages: [],
@@ -358,22 +373,22 @@ export default function AddProduct() {
 	};
 
 	useEffect(() => {
-			function handleClickOutside(event) {
-				if (
-					buttonDropdownRef.current &&
-					!buttonDropdownRef.current.contains(event.target) &&
-					dropdownRef.current &&
-					!dropdownRef.current.contains(event.target)
-				) {
-					setOpen(false);
-				}
+		function handleClickOutside(event) {
+			if (
+				buttonDropdownRef.current &&
+				!buttonDropdownRef.current.contains(event.target) &&
+				dropdownRef.current &&
+				!dropdownRef.current.contains(event.target)
+			) {
+				setOpen(false);
 			}
-	
-			document.addEventListener("mousedown", handleClickOutside);
-			return () => {
-				document.removeEventListener("mousedown", handleClickOutside);
-			};
-		}, []);
+		}
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
 
 	return (
 		<div>
@@ -397,7 +412,7 @@ export default function AddProduct() {
 								id="name"
 								value={formData.name}
 								onChange={handleChange}
-								className={`border border-gray-300 outline-none rounded-md p-2 w-200 mb-3 ${
+								className={`border border-gray-300 outline-none rounded-md p-2 w-200 mb-3 shadow-sm ${
 									errors.name
 										? "border-red-500 focus:border-red-500"
 										: "focus:border-blue-500"
@@ -440,7 +455,7 @@ export default function AddProduct() {
 									type="text"
 									id="details"
 									ref={inputDetailsRef}
-									className={`border ml-auto  border-gray-300 outline-none rounded-md p-2 w-178 mb-3 ${
+									className={`border ml-auto shadow-sm  border-gray-300 outline-none rounded-md p-2 w-178 mb-3 ${
 										errors.description
 											? "border-red-500 focus:border-red-500"
 											: "focus:border-blue-500"
@@ -462,6 +477,57 @@ export default function AddProduct() {
 								</p>
 							)}
 						</div>
+						{/* Search keywords */}
+						<div className=" space-x-3 mb-9">
+							<div className="justify-end flex space-x-6">
+								<label
+									className="text-nowrap "
+									htmlFor="searchKeywords"
+								>
+									Search Keywords:
+								</label>
+								<div className="w-193 mb-10 ">
+									<ul className="list-disc">
+										{formData.searchKeywords.map(
+											(keyword, index) => (
+												<li
+													key={index}
+													className="text-sm"
+												>
+													{keyword}
+												</li>
+											)
+										)}
+									</ul>
+								</div>
+							</div>
+							<div className="justify-end flex items-center space-x-3 -mt-9">
+								<input
+									type="text"
+									id="searchKeywords"
+									ref={inputKeywordsRef}
+									className={`border ml-auto shadow-sm  border-gray-300 outline-none rounded-md p-2 w-178 mb-3 ${
+										errors.searchKeywords
+											? "border-red-500 focus:border-red-500"
+											: "focus:border-blue-500"
+									}`}
+								/>
+								<button
+									onClick={handleConfirmKeywords}
+									type="button"
+									className="py-2 px-3 -mt-3 bg-blue-400 rounded-md cursor-pointer"
+								>
+									confirm
+								</button>
+							</div>
+						</div>
+						<div className="ml-60 h-2 -mt-11 ">
+							{errors.searchKeywords && (
+								<p className="text-red-500 text-sm">
+									{errors.searchKeywords}
+								</p>
+							)}
+						</div>
 						{/* Brand */}
 						<div className="flex justify-end space-x-3 mb-3">
 							<label className="text-nowrap " htmlFor="brand">
@@ -472,7 +538,7 @@ export default function AddProduct() {
 								id="brand"
 								value={formData.attributes.brand}
 								onChange={handleChangeAttribute}
-								className={`border border-gray-300 outline-none rounded-md p-2 w-200 mb-3 ${
+								className={`border shadow-sm border-gray-300 outline-none rounded-md p-2 w-200 mb-3 ${
 									errors.brand
 										? "border-red-500 focus:border-red-500"
 										: "focus:border-blue-500"
@@ -498,9 +564,9 @@ export default function AddProduct() {
 									type="button"
 									aria-haspopup="true"
 									aria-expanded={open}
-									className="flex items-center justify-between px-2 py-2  font-medium  ml-3 w-200 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+									className={`flex items-center justify-between px-2 py-2  font-medium  ml-3 w-200 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 ${formData.category == "All" ? "text-gray-400" : "text-gray-900"}`}
 								>
-									<span>{formData.category}</span>
+									<span>{formData.category == "All" ? "Select Category" : formData.category}</span>
 									{/* Arrow down */}
 									<div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray"></div>
 									{/* Chevron icon that rotates when open */}
@@ -533,40 +599,14 @@ export default function AddProduct() {
 								)}
 							</div>
 						</div>
-						<div className="ml-60 h-2 -mt-5">
+						<div className="ml-60 h-2 -mt-2">
 							{errors.category && (
 								<p className="text-red-500 text-sm">
 									{errors.category}
 								</p>
 							)}
 						</div>
-						{/* Sub Category */}
-						<div className="flex justify-end space-x-3 mb-3">
-							<label
-								className="text-nowrap "
-								htmlFor="subcategory"
-							>
-								Sub Category:
-							</label>
-							<input
-								type="text"
-								id="subcategory"
-								value={formData.subcategory}
-								onChange={handleChange}
-								className={`border border-gray-300 outline-none rounded-md p-2 w-200 mb-3 ${
-									errors.subcategory
-										? "border-red-500 focus:border-red-500"
-										: "focus:border-blue-500"
-								}`}
-							/>
-						</div>
-						<div className="ml-60 h-2 -mt-5">
-							{errors.subcategory && (
-								<p className="text-red-500 text-sm">
-									{errors.subcategory}
-								</p>
-							)}
-						</div>
+						
 						{/* Pricing */}
 						<div className="flex justify-end space-x-3 mb-3">
 							<label className="text-nowrap " htmlFor="costPrice">
@@ -577,7 +617,7 @@ export default function AddProduct() {
 								id="costPrice"
 								value={formData.pricing.costPrice}
 								onChange={handleChangePricing}
-								className={`border border-gray-300 outline-none rounded-md p-2 w-200 mb-3 ${
+								className={`border border-gray-300 shadow-sm outline-none rounded-md p-2 w-200 mb-3 ${
 									errors.costPrice
 										? "border-red-500 focus:border-red-500"
 										: "focus:border-blue-500"
@@ -604,7 +644,7 @@ export default function AddProduct() {
 								id="stockQuantity"
 								value={formData.stockQuantity}
 								onChange={handleChange}
-								className={`border border-gray-300 outline-none rounded-md p-2 w-200 mb-3 ${
+								className={`border border-gray-300 shadow-sm outline-none rounded-md p-2 w-200 mb-3 ${
 									errors.stockQuantity
 										? "border-red-500 focus:border-red-500"
 										: "focus:border-blue-500"
@@ -629,7 +669,7 @@ export default function AddProduct() {
 								id="mainImage"
 								// value={formData.images.mainImage}
 								onChange={handleChangeImages}
-								className={`border border-gray-300 outline-none rounded-md p-2 w-200 mb-3 ${
+								className={`border border-gray-300 shadow-sm outline-none rounded-md p-2 w-200 mb-3 ${
 									errors.mainImage
 										? "border-red-500 focus:border-red-500"
 										: "focus:border-blue-500"
@@ -648,7 +688,7 @@ export default function AddProduct() {
 							<button
 								type="button"
 								onClick={addImageInput}
-								className="px-4 py-2 bg-blue-500 text-white rounded-md cursor-pointer"
+								className="px-4 py-2 bg-blue-500 shadow-sm text-white rounded-md cursor-pointer"
 							>
 								+ Add another image
 							</button>

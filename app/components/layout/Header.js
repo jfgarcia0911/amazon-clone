@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import SearchBar from "./SearchBar";
 import { MapPin, Search, ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext ";
@@ -97,10 +98,10 @@ export default function Header() {
 			});
 	};
 
-	useEffect(() => {
-		const width = buttonRef.current.offsetWidth;
-		setCategoryWidth(width);
-	}, [category]);
+	// useEffect(() => {
+	// 	const width = buttonRef.current.offsetWidth;
+	// 	setCategoryWidth(width);
+	// }, [category]);
 
 	useEffect(() => {
 		function handleClickOutside(event) {
@@ -125,7 +126,7 @@ export default function Header() {
 			<header className="bg-gray-900  text-white text-nowrap ">
 				<div className="flex items-center  justify-between px-5 py-1  space-x-3 h-16">
 					{/* Logo */}
-					<div className="relative w-[112px]  flex items-center justify-center hover:border-1 py-2 px-1  cursor-pointer">
+					<div onClick={() => router.push("/")} className="relative w-[112px]  flex items-center justify-center hover:border-1 py-2 px-1  cursor-pointer">
 						<Image
 							src="/amazon.png"
 							alt="Logo"
@@ -144,9 +145,9 @@ export default function Header() {
 							Philippines
 						</span>
 					</div>
-
+					<SearchBar />
 					{/* Search Bar */}
-					<div className="relative flex flex-1 text-black   h-10">
+					{/* <div className="relative flex flex-1 text-black   h-10">
 						<form className="flex flex-1  bg-white rounded-sm focus-within:ring-3 focus-within:ring-yellow-500">
 							<input
 								ref={inputRef}
@@ -168,23 +169,23 @@ export default function Header() {
 									size={25}
 								/>
 							</button>
-						</form>
+						</form> */}
 
 						{/* Dropdown Button */}
-						<button
+						{/* <button
 							onClick={() => setOpen(!open)}
 							ref={buttonRef}
 							type="button"
 							aria-label={`Search in ${category} category`}
 							className="absolute h-10 px-2 space-x-1  text-gray-500 flex items-center justify-center  border-r border-gray-400 z-10 rounded-sm focus:ring-2 focus:ring-yellow-500 hover:text-black cursor-pointer"
 						>
-							<div className="text-sm ">{category}</div>
+							<div className="text-sm ">{category}</div> */}
 							{/* Arrow down */}
-							<div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray"></div>
-						</button>
+							{/* <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray"></div>
+						</button> */}
 
 						{/* Dropdown menu */}
-						{open && (
+						{/* {open && (
 							<div
 								ref={dropdownRef}
 								className="absolute w-[210px] h-[400px] top-10 z-10 rounded-xs bg-white border border-gray-500 overflow-y-auto"
@@ -201,7 +202,7 @@ export default function Header() {
 								))}
 							</div>
 						)}
-					</div>
+					</div> */}
 					{/* Language */}
 					<div className="flex relative group  items-center  ">
 						<div className="flex space-x-1 border border-transparent  group-hover:border-white cursor-pointer py-3 px-1">
