@@ -79,8 +79,7 @@ export default function SearchBar() {
 				...doc.data(),
 			}));
 			setProducts(items);
-            router.push(`/search/products?category=${selectedCategory}&query=${inputRef.current.value}`);
-			console.log(items);
+            router.push(`/search/products?category=${encodeURIComponent(selectedCategory)}&input=${inputRef.current.value}`);
 		} catch (err) {
 			console.error("Error fetching products:", err);
 		}
@@ -113,7 +112,10 @@ export default function SearchBar() {
 	}, []);
 	return (
 		<div className="relative flex flex-1 text-black   h-10">
-			<form className="flex flex-1  bg-white rounded-sm focus-within:ring-3 focus-within:ring-yellow-500">
+			<form  onSubmit={(e) => {
+    e.preventDefault();
+    fetchProducts(category);
+  }}  className="flex flex-1  bg-white rounded-sm focus-within:ring-3 focus-within:ring-yellow-500">
 				<input
 					ref={inputRef}
 					type="text"
@@ -124,8 +126,7 @@ export default function SearchBar() {
 					}}
 				/>
 				<button
-					onClick={() => fetchProducts(category)}
-					type="button"
+					type="submit"
 					aria-label="Search Amazon"
 					className="bg-orange-300 px-3 py-2 ml-auto rounded-r-sm hover:brightness-90"
 				>

@@ -104,7 +104,7 @@ export default function AddProduct() {
 			...prevData,
 			pricing: {
 				...prevData.pricing,
-				[id]: value,
+				[id]: Number(value),
 			},
 		}));
 		if (errors[id]) {
@@ -606,7 +606,6 @@ export default function AddProduct() {
 								</p>
 							)}
 						</div>
-						
 						{/* Pricing */}
 						<div className="flex justify-end space-x-3 mb-3">
 							<label className="text-nowrap " htmlFor="costPrice">
