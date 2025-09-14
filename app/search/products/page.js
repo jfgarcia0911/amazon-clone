@@ -1,16 +1,27 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
+import {
+	collection,
+	getDocs,
+	query,
+	where,
+	orderBy,
+	doc,
+	setDoc,
+	getDoc,
+	updateDoc 
+} from "firebase/firestore";
 import { db } from "../../firebase/config.js";
 import { useRouter } from "next/navigation.js";
 import Header from "../../components/layout/Header";
 import React, { useEffect, useState } from "react";
-import { ArrowDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-
+import { useAuth } from "../../context/AuthContext ";
 
 export default function SearchProductsPage() {
+	const { user } = useAuth();
+
 	const searchParams = useSearchParams();
 	const [products, setProducts] = useState([]);
 	const category = searchParams.get("category");
@@ -68,11 +79,53 @@ export default function SearchProductsPage() {
 		if (sortOption === "highest")
 			return b.pricing.costPrice - a.pricing.costPrice;
 		if (sortOption === "newest") {
-			console.log(b.timestamps.createdAt.toDate(), a.timestamps.createdAt.toDate());
-			return b.timestamps.createdAt.toDate() - a.timestamps.createdAt.toDate();
+			return (
+				b.timestamps.createdAt.toDate() -
+				a.timestamps.createdAt.toDate()
+			);
 		}
 		return 0;
 	});
+
+	const handleAddToCart = async (e, product) => {
+		e.preventDefault(); // prevent link navigation
+		e.stopPropagation(); // stop bubbling up to <Link>
+		// Check user authentication
+		if (!user) {
+			alert("You must be signed in to add items to cart.");
+			return;
+		}
+
+		const userId = user.uid;
+		const cartItemRef = doc(db,"amazon-carts",userId,"items",product.id	);
+		console.log(product);
+
+		try {
+			const cartSnap = await getDoc(cartItemRef);
+
+			if (cartSnap.exists()) {
+				// 🔼 already in cart → increase quantity
+				const currentQty = cartSnap.data().quantity || 1;
+				await updateDoc(cartItemRef, {
+					quantity: currentQty + 1,
+				});
+			} else {
+				// ➕ not in cart → add new item
+				await setDoc(cartItemRef, {
+					name: product.name,
+					image: product.images?.mainImage,
+					price: product.pricing.costPrice,
+					description: product.description,
+					createdAt: new Date(),
+					quantity: 1,
+				});
+			}
+
+			console.log("Added to cart:", product.name);
+		} catch (err) {
+			console.error("Error adding to cart:", err);
+		}
+	};
 
 	return (
 		<div>
@@ -90,8 +143,12 @@ export default function SearchProductsPage() {
 					value={sortOption}
 					onChange={(e) => setSortOption(e.target.value)}
 				>
-					<option value="lowest">Sort by: Price: Lowest to Highest</option>
-					<option value="highest">Sort by: Price: Highest to Lowest</option>
+					<option value="lowest">
+						Sort by: Price: Lowest to Highest
+					</option>
+					<option value="highest">
+						Sort by: Price: Highest to Lowest
+					</option>
 					<option value="newest">Sort by: Newest Arrivals</option>
 				</select>
 			</div>
@@ -110,7 +167,11 @@ export default function SearchProductsPage() {
 						const price = product.pricing.costPrice.toFixed(2); // always 2 decimals
 						const [whole, decimal] = price.split(".");
 						return (
-							<Link href={`/products/${product.id}`} key={product.id} className=" h-80 p-1 ">
+							<Link
+								href={`/products/${product.id}`}
+								key={product.id}
+								className=" h-80 p-1 "
+							>
 								<div className="relative  h-50 flex mb-2">
 									<Image
 										src={product.images?.mainImage}
@@ -135,13 +196,10 @@ export default function SearchProductsPage() {
 									</span>
 								</div>
 								<button
-									onClick={() =>
-										console.log(
-											"Add to cart clicked:",
-											product.images.mainImage
-										)
+									onClick={(event) =>
+										handleAddToCart(event, product)
 									}
-									className="text-xs bg-yellow-300 px-3 py-1 rounded-2xl"
+									className="text-xs bg-yellow-300 px-3 py-1 rounded-2xl cursor-pointer"
 								>
 									Add to cart
 								</button>
@@ -153,5 +211,3 @@ export default function SearchProductsPage() {
 		</div>
 	);
 }
-
-// https://amber-decisive-alligator-189.mypinata.cloud/ipfs/bafkreidafng6e2bkty23tanbbj7gfi74c2b4j7pv7x7og7rqgxehuxlnym
