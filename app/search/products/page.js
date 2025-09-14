@@ -11,16 +11,15 @@ import {
 	getDoc,
 	updateDoc 
 } from "firebase/firestore";
-import { db } from "../../firebase/config.js";
+import { db, auth } from "../../firebase/config.js";
 import { useRouter } from "next/navigation.js";
 import Header from "../../components/layout/Header";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useAuth } from "../../context/AuthContext ";
 
 export default function SearchProductsPage() {
-	const { user } = useAuth();
+	const user = auth.currentUser;
 
 	const searchParams = useSearchParams();
 	const [products, setProducts] = useState([]);

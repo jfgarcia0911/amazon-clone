@@ -7,7 +7,7 @@ import { auth, googleProvider, db } from "../../firebase/config";
 import { signInWithPopup } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/app/context/AuthContext ";
+import { useAuth } from "../../context/AuthContext ";
 export default function SignInPage() {
 	const { user } = useAuth();
 	const [signInWithEmailAndPassword, loading, error] =

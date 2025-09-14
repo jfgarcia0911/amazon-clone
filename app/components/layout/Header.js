@@ -2,54 +2,24 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
-import { MapPin, Search, ShoppingCart } from "lucide-react";
+import { MapPin, ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../context/AuthContext ";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import SecondaryNav from "./SecondaryNav";
 import Link from "next/link";
+import { collection, getDocs,onSnapshot  } from "firebase/firestore";
+import { db } from "../../firebase/config"; // adjust path
+
 export default function Header() {
 	const { user } = useAuth();
-	const inputRef = useRef();
-	const [open, setOpen] = useState(false);
-	const [category, setCategory] = useState("All");
 	const buttonRef = useRef();
 	const dropdownRef = useRef();
-	const [categoryWidth, setCategoryWidth] = useState(60);
 	const [languageCode, setLanguageCode] = useState("EN");
 	const [cartQuantity, setCartQuantity] = useState(0);
 	const router = useRouter();
-	const categories = [
-		"All Departments",
-		"Arts & Crafts",
-		"Automotive",
-		"Baby",
-		"Beauty & Personal Care",
-		"Books",
-		"Boy's Fashion",
-		"Computers",
-		"Deals",
-		"Digital Music",
-		"Electronics",
-		"Girl's Fashion",
-		"Health & Household",
-		"Home Kitchen",
-		"Industrial Scientific",
-		"Kindle Store",
-		"Luggage",
-		"Men's Fashion",
-		"Movies & TV",
-		"Music, CD's & Vinyl",
-		"Pet Supplies",
-		"Prime Video",
-		"Software",
-		"Sports Outdoor",
-		"Tools & Home Improvement",
-		"Toys and Games",
-		"Video Games",
-		"Women's Fashion",
-	];
+	
 	const languages = [
 		{ language: "English", code: "EN" },
 		{ language: "español", code: "ES" },
@@ -62,23 +32,10 @@ export default function Header() {
 		{ language: "中文(繁體)", code: "ZH" },
 	];
 
-	const handleClick = (e) => {
-		e.preventDefault();
-		const value = inputRef.current.value;
-
-		console.log(value);
-		console.log(category);
-	};
-
-	const handleCategory = (category) => {
-		setCategory(category);
-		setOpen(false);
-	};
-
 	const handleCartQuantity = () => {
-		setCartQuantity((prev) => {
-			return prev + 1;
-		});
+		// setCartQuantity((prev) => {
+		// 	return prev + 1;
+		// });
 	};
 
 	const handleSignin = () => {
@@ -98,10 +55,26 @@ export default function Header() {
 			});
 	};
 
-	// useEffect(() => {
-	// 	const width = buttonRef.current.offsetWidth;
-	// 	setCategoryWidth(width);
-	// }, [category]);
+    useEffect(() => {
+    if (!user) {
+      setCartQuantity(0);
+      return;
+    }
+
+    const userId = user.uid;
+    const itemsRef = collection(db, "amazon-carts", userId, "items");
+
+    // Listen for changes in Firestore in real-time
+    const unsubscribe = onSnapshot(itemsRef, (snapshot) => {
+      let total = 0;
+      snapshot.forEach((doc) => {
+        total += doc.data().quantity || 1;
+      });
+      setCartQuantity(total);
+    });
+
+    return () => unsubscribe(); // clean up listener
+  }, [user]);
 
 	useEffect(() => {
 		function handleClickOutside(event) {
@@ -145,64 +118,9 @@ export default function Header() {
 							Philippines
 						</span>
 					</div>
-					<SearchBar />
 					{/* Search Bar */}
-					{/* <div className="relative flex flex-1 text-black   h-10">
-						<form className="flex flex-1  bg-white rounded-sm focus-within:ring-3 focus-within:ring-yellow-500">
-							<input
-								ref={inputRef}
-								type="text"
-								placeholder="Search Amazon"
-								className=" outline-none   text-black  py-2 flex flex-1"
-								style={{
-									paddingLeft: `${categoryWidth + 8}px`,
-								}}
-							/>
-							<button
-								onClick={handleClick}
-								type="submit"
-								aria-label="Search Amazon"
-								className="bg-orange-300 px-3 py-2 ml-auto rounded-r-sm hover:brightness-90"
-							>
-								<Search
-									className="text-black cursor-pointer"
-									size={25}
-								/>
-							</button>
-						</form> */}
-
-						{/* Dropdown Button */}
-						{/* <button
-							onClick={() => setOpen(!open)}
-							ref={buttonRef}
-							type="button"
-							aria-label={`Search in ${category} category`}
-							className="absolute h-10 px-2 space-x-1  text-gray-500 flex items-center justify-center  border-r border-gray-400 z-10 rounded-sm focus:ring-2 focus:ring-yellow-500 hover:text-black cursor-pointer"
-						>
-							<div className="text-sm ">{category}</div> */}
-							{/* Arrow down */}
-							{/* <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray"></div>
-						</button> */}
-
-						{/* Dropdown menu */}
-						{/* {open && (
-							<div
-								ref={dropdownRef}
-								className="absolute w-[210px] h-[400px] top-10 z-10 rounded-xs bg-white border border-gray-500 overflow-y-auto"
-							>
-								{categories.map((cat) => (
-									<button
-										key={cat}
-										onClick={() => handleCategory(cat)}
-										aria-label="Search in all categories"
-										className="block text-sm  hover:bg-blue-500 hover:text-white w-full p-1 text-left"
-									>
-										{cat}
-									</button>
-								))}
-							</div>
-						)}
-					</div> */}
+					<SearchBar />
+					
 					{/* Language */}
 					<div className="flex relative group  items-center  ">
 						<div className="flex space-x-1 border border-transparent  group-hover:border-white cursor-pointer py-3 px-1">
