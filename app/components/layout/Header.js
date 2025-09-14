@@ -33,9 +33,7 @@ export default function Header() {
 	];
 
 	const handleCartQuantity = () => {
-		// setCartQuantity((prev) => {
-		// 	return prev + 1;
-		// });
+		router.push("/cart");
 	};
 
 	const handleSignin = () => {
@@ -68,7 +66,7 @@ export default function Header() {
     const unsubscribe = onSnapshot(itemsRef, (snapshot) => {
       let total = 0;
       snapshot.forEach((doc) => {
-        total += doc.data().quantity || 1;
+        total += doc.data().quantity;
       });
       setCartQuantity(total);
     });

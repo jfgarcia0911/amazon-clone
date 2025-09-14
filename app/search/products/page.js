@@ -104,9 +104,12 @@ export default function SearchProductsPage() {
 
 			if (cartSnap.exists()) {
 				// 🔼 already in cart → increase quantity
-				const currentQty = cartSnap.data().quantity || 1;
+				const currentQty = cartSnap.data().quantity;
+				const price = cartSnap.data().price;
+				const subTotal = cartSnap.data().subTotal;
 				await updateDoc(cartItemRef, {
 					quantity: currentQty + 1,
+					subTotal: subTotal + price
 				});
 			} else {
 				// ➕ not in cart → add new item
@@ -115,11 +118,13 @@ export default function SearchProductsPage() {
 					image: product.images?.mainImage,
 					price: product.pricing.costPrice,
 					description: product.description,
+					stockQuantity: product.stockQuantity,
+					subTotal: product.pricing.costPrice,
 					createdAt: new Date(),
 					quantity: 1,
 				});
 			}
-
+			// router.push("/cart");
 			console.log("Added to cart:", product.name);
 		} catch (err) {
 			console.error("Error adding to cart:", err);
