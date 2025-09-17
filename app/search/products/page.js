@@ -9,7 +9,7 @@ import {
 	doc,
 	setDoc,
 	getDoc,
-	updateDoc 
+	updateDoc,
 } from "firebase/firestore";
 import { db, auth } from "../../firebase/config.js";
 import { useRouter } from "next/navigation.js";
@@ -17,6 +17,8 @@ import Header from "../../components/layout/Header";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { toast } from "react-toastify";
+
 
 export default function SearchProductsPage() {
 	const user = auth.currentUser;
@@ -29,44 +31,42 @@ export default function SearchProductsPage() {
 	const [sortOption, setSortOption] = useState("newest");
 	useEffect(() => {
 		if (category !== null || input !== null) {
-			fetchProducts(category, input);
+			fetchProducts(category);
 		}
 	}, [category, input]);
 
-	const fetchProducts = async (selectedCategory, searchInput) => {
+	const fetchProducts = async (selectedCategory) => {
 		try {
-			let q;
-			if (searchInput) {
-				// Filter by keywords
-				q = query(
-					collection(db, "amazon-products"),
-					where(
-						"searchKeywords",
-						"array-contains",
-						searchInput.toLowerCase()
-					),
-					orderBy("timestamps.createdAt", "desc")
-				);
-			} else if (
-				selectedCategory == "All Departments" ||
-				selectedCategory == "All"
-			) {
-				// No filter, fetch everything
-				q = collection(db, "amazon-products");
-			} else {
-				// Filter by category
-				q = query(
-					collection(db, "amazon-products"),
-					where("category", "==", selectedCategory)
-				);
-			}
+			const q = collection(db, "amazon-products");
 			const querySnapshot = await getDocs(q);
 			const items = querySnapshot.docs.map((doc) => ({
 				id: doc.id,
 				...doc.data(),
 			}));
-			setProducts(items);
-			console.log(items);
+			
+
+			const filtered = items.filter((item) => {
+				// name check
+				const matchesName = item.name
+					?.toLowerCase()
+					.includes(input.toLowerCase());
+				// keywords check (if array exists)
+				const matchesKeywords = item.searchKeywords?.some((keyword) =>
+					keyword.toLowerCase().includes(input.toLowerCase())
+				);
+				// If category is All → only check name
+				if (category === "All" || category === "All Departments") {
+					return matchesName || matchesKeywords;
+				}
+				// strict category match
+				const matchesCategory =	item.category === category;
+
+				// category must match, and EITHER name OR keywords
+				return matchesCategory && (matchesName || matchesKeywords);
+			});
+
+			setProducts(filtered);
+			console.log(filtered);
 		} catch (err) {
 			console.error("Error fetching products:", err);
 		}
@@ -89,6 +89,7 @@ export default function SearchProductsPage() {
 	const handleAddToCart = async (e, product) => {
 		e.preventDefault(); // prevent link navigation
 		e.stopPropagation(); // stop bubbling up to <Link>
+		toast.success("Add to cart successful!");
 		// Check user authentication
 		if (!user) {
 			alert("You must be signed in to add items to cart.");
@@ -96,7 +97,13 @@ export default function SearchProductsPage() {
 		}
 
 		const userId = user.uid;
-		const cartItemRef = doc(db,"amazon-carts",userId,"items",product.id	);
+		const cartItemRef = doc(
+			db,
+			"amazon-carts",
+			userId,
+			"items",
+			product.id
+		);
 		console.log(product);
 
 		try {
@@ -109,7 +116,7 @@ export default function SearchProductsPage() {
 				const subTotal = cartSnap.data().subTotal;
 				await updateDoc(cartItemRef, {
 					quantity: currentQty + 1,
-					subTotal: subTotal + price
+					subTotal: subTotal + price,
 				});
 			} else {
 				// ➕ not in cart → add new item
