@@ -6,6 +6,8 @@ import { db } from "../../firebase/config";
 import { collection, addDoc } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext ";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { Loader2, Check } from "lucide-react";
 
 export default function AddProduct() {
 	const { user } = useAuth();
@@ -14,12 +16,12 @@ export default function AddProduct() {
 	const dropdownRef = useRef();
 	const inputDetailsRef = useRef();
 	const inputKeywordsRef = useRef();
-	const router = useRouter();
-
+	const [status, setStatus] = useState("idle");
+	const [uploadStatus, setUploadStatus] = useState({});
 	const [open, setOpen] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
+
 	const categories = [
-		"All Departments",
 		"Arts & Crafts",
 		"Automotive",
 		"Baby",
@@ -112,6 +114,7 @@ export default function AddProduct() {
 		}
 	};
 	const handleChangeImages = async (e) => {
+		setStatus("loading");
 		const { id, value } = e.target;
 		const file = e.target.files[0];
 		if (file) {
@@ -133,6 +136,8 @@ export default function AddProduct() {
 					[id]: imgUrl,
 				},
 			}));
+			toast.success("Upload successful");
+			setStatus("success");
 		} else {
 			setFormData((prevData) => ({
 				...prevData,
@@ -141,9 +146,11 @@ export default function AddProduct() {
 					[id]: "",
 				},
 			}));
+			setStatus("idle");
 		}
 		if (errors[id]) {
 			setErrors((prevErrors) => ({ ...prevErrors, [id]: "" }));
+			setStatus("idle");
 		}
 	};
 
@@ -157,12 +164,16 @@ export default function AddProduct() {
 	};
 
 	const handleChangeAddImages = async (e, index) => {
+		setUploadStatus((prev) => ({ ...prev, [index]: "loading" }));
+
 		// setIsPosting(true);
 		const file = e.target.files[0];
+		// Check if a file was selected
 		if (file) {
-			// Post image to Pinata and get Url
+			// Create FormData object to prepare for file upload
 			const data = new FormData();
 			data.set("file", file);
+			// Send POST request to upload file to the server
 			const response = await fetch("/api/files", {
 				method: "POST",
 				body: data,
@@ -182,10 +193,13 @@ export default function AddProduct() {
 					},
 				};
 			});
+			toast.success("Upload successful");
+			setUploadStatus((prev) => ({ ...prev, [index]: "success" }));
 		} else {
+			// If no file selected, clear the image at the specified index
 			setFormData((prev) => {
 				const newImages = [...prev.images.additionalImages];
-				newImages[index] = ""; // replace or set at index
+				newImages[index] = ""; // Clear the value at index
 				return {
 					...prev,
 					images: {
@@ -194,6 +208,7 @@ export default function AddProduct() {
 					},
 				};
 			});
+			setUploadStatus((prev) => ({ ...prev, [index]: "idle" }));
 		}
 
 		// Clear error for this specific input
@@ -203,6 +218,7 @@ export default function AddProduct() {
 				...prevErrors,
 				[errorKey]: "",
 			}));
+			setUploadStatus((prev) => ({ ...prev, [index]: "idle" }));
 		}
 	};
 
@@ -273,7 +289,8 @@ export default function AddProduct() {
 			newErrors.category = "Choose a category";
 		}
 		if (!formData.searchKeywords.length) {
-			newErrors.searchKeywords = "Atleast one search keywords are required";
+			newErrors.searchKeywords =
+				"Atleast one search keywords are required";
 		}
 		if (!formData.pricing.costPrice || formData.pricing.costPrice <= 0) {
 			newErrors.costPrice = "Cost price must be greater than zero";
@@ -322,6 +339,7 @@ export default function AddProduct() {
 						currency: "USD",
 						costPrice: formData.pricing.costPrice,
 					},
+					subTotal: formData.pricing.costPrice,
 					stockQuantity: formData.stockQuantity,
 					timestamps: {
 						createdAt: new Date(),
@@ -329,8 +347,8 @@ export default function AddProduct() {
 					},
 				});
 				console.log("Product created with ID:", user.uid);
-				alert("Product added successfully!");
-				router.push("/");
+				toast.success("Product added successfully!");
+				// router.push("/");
 				// ✅ Reset everything after submit
 				setFormData({
 					name: "",
@@ -341,10 +359,10 @@ export default function AddProduct() {
 						model: "",
 						material: "",
 					},
-					category: "",
+					category: "Select Category",
 					searchKeywords: [],
 					images: {
-						mainImage: "",
+						mainImage: null,
 						additionalImages: [],
 					},
 					pricing: {
@@ -357,6 +375,8 @@ export default function AddProduct() {
 						updatedAt: new Date(),
 					},
 				});
+				setStatus("idle");
+				setUploadStatus({});
 			} catch (error) {
 				console.error("Error adding product:", error);
 				alert("Error adding product. Please try again.");
@@ -400,7 +420,9 @@ export default function AddProduct() {
 					{/* Form fields for product details */}
 					<form
 						onSubmit={handleSubmit}
-						className="relative px-20 py-5 space-y-10 border border-gray-300 rounded-md"
+						className={`${
+							isSubmitting && "opacity-50"
+						} relative px-20 py-5 space-y-10 border border-gray-300 rounded-md `}
 					>
 						{/* Name */}
 						<div className="flex justify-end space-x-3 mb-3">
@@ -564,9 +586,17 @@ export default function AddProduct() {
 									type="button"
 									aria-haspopup="true"
 									aria-expanded={open}
-									className={`flex items-center justify-between px-2 py-2  font-medium  ml-3 w-200 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 ${formData.category == "All" ? "text-gray-400" : "text-gray-900"}`}
+									className={`flex items-center justify-between px-2 py-2  font-medium  ml-3 w-200 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+										formData.category == "All"
+											? "text-gray-400"
+											: "text-gray-900"
+									}`}
 								>
-									<span>{formData.category == "All" ? "Select Category" : formData.category}</span>
+									<span>
+										{formData.category == "All"
+											? "Select Category"
+											: formData.category}
+									</span>
 									{/* Arrow down */}
 									<div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray"></div>
 									{/* Chevron icon that rotates when open */}
@@ -658,8 +688,11 @@ export default function AddProduct() {
 							)}
 						</div>
 						{/* Main Image */}
-						<div className="flex justify-end space-x-3 mb-3">
-							<label className="text-nowrap " htmlFor="mainImage">
+						<div className="flex relative justify-end space-x- mb-3">
+							<label
+								className="text-nowrap mr-3"
+								htmlFor="mainImage"
+							>
 								Main Image:
 							</label>
 							<input
@@ -674,6 +707,13 @@ export default function AddProduct() {
 										: "focus:border-blue-500"
 								}`}
 							/>
+							{status === "loading" && (
+								<Loader2 className="animate-spin h-4 w-4 text-blue-500 absolute top-3 right-3" />
+							)}
+							{status === "success" && (
+								<Check className="h-4 w-4 text-green-600 absolute top-3 right-3" />
+							)}
+							{status === "idle" && ""}
 						</div>
 						<div className="ml-60 h-2 -mt-5">
 							{errors.mainImage && (
@@ -693,13 +733,14 @@ export default function AddProduct() {
 							</button>
 						</div>
 						{formData.images.additionalImages.map((img, index) => {
+							const status = uploadStatus[index] || "idle";
 							return (
 								<div
 									key={index}
-									className="flex justify-end space-x-3 mb-3"
+									className="flex relative justify-end  mb-3"
 								>
 									<label
-										className="text-nowrap "
+										className="text-nowrap mr-3"
 										htmlFor={`additionalImages`}
 									>
 										Additional Images:
@@ -716,6 +757,12 @@ export default function AddProduct() {
 												: "focus:border-blue-500"
 										}`}
 									/>
+									{status === "loading" && (
+										<Loader2 className="absolute top-2 right-3 animate-spin h-4 w-4 text-blue-500" />
+									)}
+									{status === "success" && (
+										<Check className="absolute top-2 right-3 h-4 w-4 text-green-600" />
+									)}
 								</div>
 							);
 						})}
@@ -741,9 +788,17 @@ export default function AddProduct() {
 						<div className="text-center">
 							<button
 								type="submit"
-								className="bg-blue-500 text-white rounded-md p-2 w-100 mt-5 cursor-pointer hover:bg-blue-600"
+								className="bg-blue-500 text-white rounded-md p-2 w-100 mt-5 cursor-pointer hover:bg-blue-600 mx-auto flex justify-center"
 							>
-								{isSubmitting ? "Submitting..." : "Submit"}
+								{isSubmitting ? (
+									<Loader2
+										className="animate-spin"
+										size={20}
+										strokeWidth={3}
+									/>
+								) : (
+									"Submit"
+								)}
 							</button>
 						</div>
 					</form>
