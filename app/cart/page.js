@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import {
 	collection,
-	getDocs,
 	getDoc,
 	query,
 	orderBy,
@@ -13,17 +12,19 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import Image from "next/image";
-import { auth } from "../firebase/config";
 import { Trash, Plus, Minus } from "lucide-react";
 import Header from "../components/layout/Header";
 import { useAuth } from "../context/AuthContext ";
-
+import Link from "next/link";
+import { toast } from "react-toastify";
+import { Loader2 } from "lucide-react";
 export default function CartPage() {
 	const [cartItems, setCartItems] = useState([]);
 	const { user } = useAuth();
 	const [calculatedSubtotal, setCalculatedSubtotal] = useState(0);
-
+	const [isLoading, setIsLoading] = useState(null);
 	const handleAddToCart = async (item, num) => {
+		setIsLoading(item.id);
 		// Check user authentication
 		if (!user) {
 			alert("You must be signed in to add items to cart.");
@@ -54,8 +55,12 @@ export default function CartPage() {
 		} catch (err) {
 			console.error("Error updating cart:", err);
 		}
+		setIsLoading(null);
 	};
 
+	const handleSuccess = () => {
+		toast.success("Checkout successful!");
+	};
 	useEffect(() => {
 		if (!user) {
 			setCartItems([]);
@@ -90,20 +95,20 @@ export default function CartPage() {
 	}, [user]);
 
 	return (
-		<div>
+		<div className="overflow-hidden">
 			<Header />
 			{cartItems.length === 0 ? (
 				<p className="text-3xl font-bold mb-4 p-10">
 					Your Amazon Cart is empty.
 				</p>
 			) : (
-				<div className="flex justify-center overflow-x-hidden">
-					<div className="space-y-4 px-10 ">
-						<h1 className="text-3xl mt-5 mb-4">Shopping Cart</h1>
-						<div className=" m-0 w-full flex px-5 text-gray-500 text-sm top-auto">
+				<div className=" justify-center items-center xl:items-start max-w-screen flex flex-col xl:flex-row">
+					<div className="space-y-4 px-10  ">
+						<h1 className="text-3xl mt-5  mb-4">Shopping Cart</h1>
+						<div className=" m-0 lg:w-200 xl:w-240 2xl:w-290 flex px-5 text-gray-500 text-sm top-auto">
 							<p className="ml-auto">Price</p>
 						</div>
-						<div className="border border-gray-300 mb-4 flex flex-col w-290  rounded-lg">
+						<div className="border border-gray-300 mb-4 flex flex-col lg:w-200 xl:w-240 2xl:w-290  rounded-lg">
 							{cartItems.map((item) => {
 								// Only render items with quantity >= 1
 								if (item.quantity < 1) return null;
@@ -111,28 +116,34 @@ export default function CartPage() {
 								const [whole, decimal] = price.split(".");
 								return (
 									<div
-										className="flex w-full p-5"
+										className={`flex w-full p-5 space-x-5 ${isLoading === item.id && 'opacity-50'}`}
 										key={item.id}
 									>
 										{/* Image */}
-										<div className="">
+										<Link
+											href={`/products/${item.id}`}
+											className="w-auto  items-center justify-center hidden md:block"
+										>
 											<Image
 												src={item.image}
 												alt={item.name}
-												width={500}
-												height={500}
+												width={50}
+												height={50}
 												quality={100}
-												className="object-contain h-32 w-48 p-1"
+												className="object-contain  w-[200px] h-[128px] p-1"
 											/>
-										</div>
+										</Link>
 
 										{/* Description */}
 										<div className="space-y-1">
-											<div className=" xl:w-full">
+											<Link
+												href={`/products/${item.id}`}
+												className=" md:w-80 lg:w-120 xl:w-160  2xl:w-180 line-clamp-2"
+											>
 												<h2 className="font-medium text-lg">
 													{item.name}
 												</h2>
-											</div>
+											</Link>
 											<div>
 												<p
 													className={`${
@@ -154,18 +165,23 @@ export default function CartPage() {
 													</span>
 												</p>
 											</div>
-											<div className="flex space-x-5 border-3 font-bold border-yellow-300 rounded-xl w-27 items-center justify-center mt-3">
-												<div
+											{/* Add or Less a quantity */}
+											<div
+												className={`flex space-x-4 border-3 font-bold border-yellow-300 rounded-xl w-27 items-center justify-center mt-3 h-8`}
+											>
+												<button
+										disabled={isLoading === item.id}
+
 													onClick={() =>
 														handleAddToCart(
 															item,
 															-1
 														)
 													}
-													className="cursor-pointer"
+													className={`cursor-pointer `}
 												>
 													{item.quantity > 1 ? (
-														<Minus
+														<Minus 
 															size={16}
 															strokeWidth={3}
 														/>
@@ -175,9 +191,17 @@ export default function CartPage() {
 															strokeWidth={3}
 														/>
 													)}
-												</div>
-												<div>{item.quantity}</div>
-												<div
+												</button>
+												<div className="w-4 flex justify-center"> {isLoading === item.id? (
+														<Loader2
+															className="animate-spin"
+															size={20}
+															strokeWidth={3}
+														/>
+													) : item.quantity }</div>
+												<button
+										disabled={isLoading === item.id}
+
 													onClick={() =>
 														handleAddToCart(item, 1)
 													}
@@ -187,7 +211,7 @@ export default function CartPage() {
 														size={16}
 														strokeWidth={3}
 													/>
-												</div>
+												</button>
 											</div>
 										</div>
 
@@ -208,13 +232,18 @@ export default function CartPage() {
 							})}
 						</div>
 					</div>
-					<div className="mt-23 w-60 space-y-4">
+					<div className="my-10 xl:mt-18 w-60 space-y-4">
 						<div className="w-60">
-							Subtotal ({cartItems.length} items): 
-                            <span className="font-bold ml-1">${calculatedSubtotal}</span>
+							Subtotal ({cartItems.length} items):
+							<span className="font-bold ml-1">
+								${calculatedSubtotal}
+							</span>
 						</div>
 						<div>
-							<button className="bg-yellow-300 w-full py-1 rounded-2xl text-sm">
+							<button
+								onClick={handleSuccess}
+								className="bg-yellow-300 w-full py-1 rounded-2xl text-sm"
+							>
 								Proceed to checkout
 							</button>{" "}
 						</div>

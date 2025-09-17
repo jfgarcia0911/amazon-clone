@@ -145,7 +145,7 @@ export default function ProductsById() {
 					{/* Product Details */}
 					<div className="w-160 py-5 ml-10 space-y-5">
 						{/* Product Name */}
-						<div className="text-2xl  border-b border-gray-300 pb-4 pt-2">
+						<div className="text-2xl line-clamp-2 md:line-clamp-4 overflow-hidden h-20 md:h-36 border-b border-gray-300 pb-4 pt-2">
 							{productData.name}
 						</div>
 						{/* Price */}
