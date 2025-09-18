@@ -6,6 +6,7 @@ export default function Footer() {
 	const scrollTop = () => {
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	};
+	
 	return (
 		<div className="text-white w-full relative flex flex-col text-nowrap">
 			{/* First layer */}
