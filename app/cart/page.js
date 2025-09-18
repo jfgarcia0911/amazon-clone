@@ -129,7 +129,6 @@ export default function CartPage() {
 												alt={item.name}
 												width={50}
 												height={50}
-												quality={100}
 												className="object-contain  w-[200px] h-[128px] p-1"
 											/>
 										</Link>
