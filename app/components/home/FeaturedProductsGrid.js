@@ -95,7 +95,8 @@ const productGallery = [
 									>
 										{prod.image.map((img, index) => {
 											return (
-												<div
+												<Link
+												href={`/search/products?category=${encodeURIComponent(prod.category || 'All')}&input=${''}`} 
 													key={index}
 													className="flex flex-col"
 												>
@@ -110,7 +111,7 @@ const productGallery = [
 													<div className="text-sm truncate">
 														{img.link}
 													</div>
-												</div>
+												</Link>
 											);
 										})}
 									</div>
