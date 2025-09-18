@@ -9,7 +9,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import SecondaryNav from "./SecondaryNav";
 import Link from "next/link";
-import { collection, getDocs,onSnapshot  } from "firebase/firestore";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase/config"; // adjust path
 
 export default function Header() {
@@ -19,7 +19,38 @@ export default function Header() {
 	const [languageCode, setLanguageCode] = useState("EN");
 	const [cartQuantity, setCartQuantity] = useState(0);
 	const router = useRouter();
-	
+	const [isVisible, setIsVisible] = useState("up");
+	const lastScrollY = useRef(0);
+
+	useEffect(() => {
+		const handleScroll = () => {
+			const currentScrollY = window.scrollY;
+			// setScrollY(currentScrollY);
+
+			// Determine scroll direction
+			if (currentScrollY <= 50) {
+				setIsVisible("up");
+			} else if (
+				currentScrollY < lastScrollY.current &&
+				currentScrollY > 100
+			) {
+				setIsVisible("up");
+			} else if (
+				currentScrollY > lastScrollY.current &&
+				currentScrollY > 100
+			) {
+				setIsVisible("down");
+			}
+			// Update the ref with current position for next comparison
+			lastScrollY.current = currentScrollY;
+		};
+		window.addEventListener("scroll", handleScroll);
+		// Cleanup the event listener when the component unmounts
+		return () => {
+			window.removeEventListener("scroll", handleScroll);
+		};
+	}, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
+
 	const languages = [
 		{ language: "English", code: "EN" },
 		{ language: "español", code: "ES" },
@@ -53,26 +84,26 @@ export default function Header() {
 			});
 	};
 
-    useEffect(() => {
-    if (!user) {
-      setCartQuantity(0);
-      return;
-    }
+	useEffect(() => {
+		if (!user) {
+			setCartQuantity(0);
+			return;
+		}
 
-    const userId = user.uid;
-    const itemsRef = collection(db, "amazon-carts", userId, "items");
+		const userId = user.uid;
+		const itemsRef = collection(db, "amazon-carts", userId, "items");
 
-    // Listen for changes in Firestore in real-time
-    const unsubscribe = onSnapshot(itemsRef, (snapshot) => {
-      let total = 0;
-      snapshot.forEach((doc) => {
-        total += doc.data().quantity;
-      });
-      setCartQuantity(total);
-    });
+		// Listen for changes in Firestore in real-time
+		const unsubscribe = onSnapshot(itemsRef, (snapshot) => {
+			let total = 0;
+			snapshot.forEach((doc) => {
+				total += doc.data().quantity;
+			});
+			setCartQuantity(total);
+		});
 
-    return () => unsubscribe(); // clean up listener
-  }, [user]);
+		return () => unsubscribe(); // clean up listener
+	}, [user]);
 
 	useEffect(() => {
 		function handleClickOutside(event) {
@@ -93,11 +124,20 @@ export default function Header() {
 	}, []);
 
 	return (
-		<>
-			<header className="bg-gray-900  text-white text-nowrap ">
-				<div className="flex items-center  justify-between px-5 py-1  space-x-3 h-16">
+		<div>
+			<div
+				className={`bg-gray-900 fixed z-50 top-0 text-white text-nowrap w-full  ${
+					isVisible === "up" ? "translate-y-0" : "-translate-y-full"
+				}`}
+			>
+				<div
+					className={`flex items-center  justify-between px-5 py-1  space-x-3 h-16`}
+				>
 					{/* Logo */}
-					<div onClick={() => router.push("/")} className="relative w-[112px]  flex items-center justify-center hover:border-1 py-2 px-1  cursor-pointer">
+					<div
+						onClick={() => router.push("/")}
+						className="relative w-[112px]  flex items-center justify-center hover:border-1 py-2 px-1  cursor-pointer"
+					>
 						<Image
 							src="/amazon.png"
 							alt="Logo"
@@ -118,7 +158,7 @@ export default function Header() {
 					</div>
 					{/* Search Bar */}
 					<SearchBar />
-					
+
 					{/* Language */}
 					<div className="flex relative group  items-center  ">
 						<div className="flex space-x-1 border border-transparent  group-hover:border-white cursor-pointer py-3 px-1">
@@ -128,7 +168,7 @@ export default function Header() {
 								width={20}
 								height={20}
 								priority
-								className="object-contain"
+								className="object-contain "
 							/>
 							<div>{languageCode}</div>
 						</div>
@@ -274,9 +314,16 @@ export default function Header() {
 										) : (
 											""
 										)}
-										{user? <Link href={'/products/add'} className="hover:underline hover:text-orange-500 cursor-pointer">
-											Add product
-										</Link> : ''}
+										{user ? (
+											<Link
+												href={"/products/add"}
+												className="hover:underline hover:text-orange-500 cursor-pointer"
+											>
+												Add product
+											</Link>
+										) : (
+											""
+										)}
 										<p className="hover:underline hover:text-orange-500 cursor-pointer">
 											Account
 										</p>
@@ -341,8 +388,8 @@ export default function Header() {
 						</div>
 					</div>
 				</div>
-			</header>
-			<SecondaryNav />
-		</>
+			</div>
+			
+		</div>
 	);
 }
