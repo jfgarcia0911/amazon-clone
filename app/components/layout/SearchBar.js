@@ -151,7 +151,7 @@ export default function SearchBar() {
 			{open && (
 				<div
 					ref={dropdownRef}
-					className="absolute w-[210px] h-[400px] top-10 z-10 rounded-xs bg-white border border-gray-500 overflow-y-auto"
+					className="absolute w-[210px] h-[400px] top-10 z-50 rounded-xs bg-white border border-gray-500 overflow-y-auto"
 				>
 					{categories.map((cat) => (
 						<button

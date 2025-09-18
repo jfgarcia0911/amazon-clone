@@ -1,6 +1,11 @@
 import React from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
+
+export default function FeaturedProductsGrid() {
+	const router = useRouter();
 const productGallery = [
 	{
 		title: "FREE Shipping to Philippines",
@@ -32,6 +37,7 @@ const productGallery = [
 		title: "Get your game on",
 		image: [{ img: "/game-on.png", link: "" }],
 		link: "Shop gaming",
+		category: 'Computers'
 	},
 	{
 		title: "Top categories in Kitchen appliances",
@@ -65,7 +71,7 @@ const productGallery = [
 	},
 ];
 
-export default function FeaturedProductsGrid() {
+	// router.push(`/search/products?category=${encodeURIComponent(selectedCategory)}&input=${inputRef.current.value}
 	return (
 		<div className="relative w-full  min-h-[600px] font-sans ">
 			<div className="absolute -top-89 left-0 w-full ">
@@ -108,9 +114,11 @@ export default function FeaturedProductsGrid() {
 											);
 										})}
 									</div>
-									<div className="truncate mt-auto pt-5 text-sm text-blue-500 hover:text-blue-800 cursor-pointer">
+									<Link 
+									href={`/search/products?category=${encodeURIComponent(prod.category || 'All')}&input=${''}`} 
+									className="truncate mt-auto pt-5 text-sm text-blue-500 hover:text-blue-800 cursor-pointer">
 										{prod.link}
-									</div>
+									</Link>
 								</div>
 							);
 						})}

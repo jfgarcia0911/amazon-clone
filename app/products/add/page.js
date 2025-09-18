@@ -412,7 +412,7 @@ export default function AddProduct() {
 		<div>
 			<Header />
 
-			<div className="w-full flex justify-center items-center mt-10">
+			<div className="w-full mt-20 flex justify-center items-center mt-10">
 				<div className="w-300 ">
 					<h2>Add New Product</h2>
 					{/* Form fields for product details */}

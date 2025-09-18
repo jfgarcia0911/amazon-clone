@@ -98,11 +98,11 @@ export default function CartPage() {
 		<div className="overflow-hidden">
 			<Header />
 			{cartItems.length === 0 ? (
-				<p className="text-3xl font-bold mb-4 p-10">
+				<p className="text-3xl font-bold mb-4 p-10 mt-20">
 					Your Amazon Cart is empty.
 				</p>
 			) : (
-				<div className=" justify-center items-center xl:items-start max-w-screen flex flex-col xl:flex-row">
+				<div className="mt-20 justify-center items-center xl:items-start max-w-screen flex flex-col xl:flex-row">
 					<div className="space-y-4 px-10  ">
 						<h1 className="text-3xl mt-5  mb-4">Shopping Cart</h1>
 						<div className=" m-0 lg:w-200 xl:w-240 2xl:w-290 flex px-5 text-gray-500 text-sm top-auto">

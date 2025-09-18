@@ -27,7 +27,7 @@ export default function SecondaryNav() {
 		};
 	}, []); // Empty dependency array means this effect runs once on mount and cleans up on unmount
 	return (
-		<div className={`bg-gray-700 text-white font-sans fixed top-16 w-full z-50  ${
+		<div className={`bg-gray-700 text-white font-sans fixed top-16 w-full z-45  ${
           isVisible === 'up' ? 'translate-y-0' : '-translate-y-50'
         }`}>
 			<div className="flex justify-between items-center px-5 h-[40px]  text-nowrap">

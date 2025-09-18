@@ -137,7 +137,7 @@ export default function SearchProductsPage() {
 		<div>
 			<Header />
 
-			<div className="flex items-center justify-between px-10 md:px-20  lg:px-30 xl:px-40 2xl:px-80 w-full h-10  border-b shadow-sm border-gray-300 text-xs">
+			<div className="flex mt-20 items-center justify-between px-10 md:px-20  lg:px-30 xl:px-40 2xl:px-80 w-full h-10  border-b shadow-sm border-gray-300 text-xs">
 				<div>
 					{products.length} results for{" "}
 					<span className="text-orange-700">{`"${

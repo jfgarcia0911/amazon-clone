@@ -120,7 +120,7 @@ export default function ProductsById() {
 		<>
 			<Header />
 			{productData && (
-				<div className="flex justify-center mt-25">
+				<div className="flex  justify-center mt-25">
 					{/* Side Images */}
 					<div className="py-5 space-y-2 space-x-2">
 						<div className="relative border border-gray-300 w-10 rounded-sm ">
