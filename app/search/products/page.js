@@ -3,16 +3,12 @@ import { useSearchParams } from "next/navigation";
 import {
 	collection,
 	getDocs,
-	query,
-	where,
-	orderBy,
 	doc,
 	setDoc,
 	getDoc,
 	updateDoc,
 } from "firebase/firestore";
 import { db, auth } from "../../firebase/config.js";
-import { useRouter } from "next/navigation.js";
 import Header from "../../components/layout/Header";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
@@ -27,15 +23,15 @@ export default function SearchProductsPage() {
 	const [products, setProducts] = useState([]);
 	const category = searchParams.get("category");
 	const input = searchParams.get("input");
-	const router = useRouter();
 	const [sortOption, setSortOption] = useState("newest");
 	useEffect(() => {
 		if (category !== null || input !== null) {
-			fetchProducts(category);
+			fetchProducts();
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [category, input]);
 
-	const fetchProducts = async (selectedCategory) => {
+	const fetchProducts = async () => {
 		try {
 			const q = collection(db, "amazon-products");
 			const querySnapshot = await getDocs(q);
@@ -66,7 +62,6 @@ export default function SearchProductsPage() {
 			});
 
 			setProducts(filtered);
-			console.log(filtered);
 		} catch (err) {
 			console.error("Error fetching products:", err);
 		}

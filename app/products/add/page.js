@@ -251,7 +251,6 @@ export default function AddProduct() {
 		if (errors.searchKeywords) {
 			setErrors((prevErrors) => ({ ...prevErrors, searchKeywords: "" }));
 		}
-		console.log("Detail confirmed:", formData.searchKeywords);
 		inputKeywordsRef.current.value = "";
 	};
 	const addImageInput = (e) => {
@@ -315,7 +314,6 @@ export default function AddProduct() {
 		if (validateForm()) {
 			setIsSubmitting(true);
 			// Handle form submission logic here
-			console.log("Form submitted:", formData);
 			// TODO: Handle form submission (e.g., send data to API)
 			try {
 				//Save products to Firestore
@@ -346,7 +344,6 @@ export default function AddProduct() {
 						updatedAt: new Date(),
 					},
 				});
-				console.log("Product created with ID:", user.uid);
 				toast.success("Product added successfully!");
 				// router.push("/");
 				// ✅ Reset everything after submit
@@ -375,6 +372,7 @@ export default function AddProduct() {
 						updatedAt: new Date(),
 					},
 				});
+				mainImageRef.current.value = '';
 				setStatus("idle");
 				setUploadStatus({});
 			} catch (error) {

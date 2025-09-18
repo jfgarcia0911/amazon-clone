@@ -36,7 +36,7 @@ export default function ProductsById() {
 				const subTotal = cartSnap.data().subTotal;
 				await updateDoc(cartItemRef, {
 					quantity: currentQty + 1,
-					subTotal: subTotal + price
+					subTotal: subTotal + price,
 				});
 			} else {
 				// ➕ not in cart → add new item
@@ -46,6 +46,7 @@ export default function ProductsById() {
 					price: product.pricing.costPrice,
 					description: product.description,
 					stockQuantity: product.stockQuantity,
+					subTotal: product.pricing.costPrice,
 					createdAt: new Date(),
 					quantity: 1,
 				});
@@ -73,6 +74,33 @@ export default function ProductsById() {
 						const [w, d] = price.split(".");
 						setWhole(w);
 						setDecimal(d);
+
+						// These items will be shown as recent views on the homepage.
+						const storedItems =
+							JSON.parse(localStorage.getItem("recentView")) ||
+							[];
+
+						const newItem = {
+							id: params.id,
+							mainImage: docSnap.data().images.mainImage,
+							name: docSnap.data().name
+						};
+
+						// Check if item already exists
+						const exists = storedItems.some(
+							(item) => item.id === newItem.id
+						);
+
+						let updatedItems = storedItems;
+						if (!exists) {
+							updatedItems = [newItem, ...storedItems];
+							localStorage.setItem(
+								"recentView",
+								JSON.stringify(updatedItems)
+							);
+						}
+
+						console.log(storedItems);
 					} else {
 						console.log("No such document!");
 					}
@@ -92,7 +120,7 @@ export default function ProductsById() {
 		<>
 			<Header />
 			{productData && (
-				<div className="flex justify-center mt-10">
+				<div className="flex justify-center mt-25">
 					{/* Side Images */}
 					<div className="py-5 space-y-2 space-x-2">
 						<div className="relative border border-gray-300 w-10 rounded-sm ">
