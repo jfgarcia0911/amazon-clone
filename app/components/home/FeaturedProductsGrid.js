@@ -32,6 +32,7 @@ const productGallery = [
 			{ img: "/bedding.png", link: "Bedding" },
 		],
 		link: "Discover more in Home",
+		category: 'Health & Household'
 	},
 	{
 		title: "Get your game on",
@@ -48,6 +49,7 @@ const productGallery = [
 			{ img: "/kettle.png", link: "Kettle" },
 		],
 		link: "Explore all products in Kitchen",
+		category: 'Home Kitchen'
 	},
 	{
 		title: "Refresh your space",

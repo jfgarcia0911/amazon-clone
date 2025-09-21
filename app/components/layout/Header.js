@@ -82,6 +82,8 @@ export default function Header() {
 			.catch((error) => {
 				console.error("Error signing out:", error);
 			});
+		localStorage.setItem("recentView", JSON.stringify([]));
+		localStorage.setItem("relatedCategory", JSON.stringify(''));
 	};
 
 	useEffect(() => {

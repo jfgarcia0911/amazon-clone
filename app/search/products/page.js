@@ -132,7 +132,10 @@ export default function SearchProductsPage() {
 	};
 	const handleCategory = (cat) => {
 		console.log(cat);
+		if(user){
 		localStorage.setItem("relatedCategory", JSON.stringify(cat));
+
+		}
 	};
 
 	return (

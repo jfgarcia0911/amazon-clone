@@ -75,7 +75,8 @@ export default function ProductsById() {
 						setWhole(w);
 						setDecimal(d);
 
-						// These items will be shown as recent views on the homepage.
+						if(user){
+							// These items will be shown as recent views on the homepage.
 						const storedItems =
 							JSON.parse(localStorage.getItem("recentView")) ||
 							[];
@@ -99,8 +100,8 @@ export default function ProductsById() {
 								JSON.stringify(updatedItems)
 							);
 						}
+						}
 
-						console.log(storedItems);
 					} else {
 						console.log("No such document!");
 					}
