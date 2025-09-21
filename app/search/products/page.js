@@ -15,7 +15,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "react-toastify";
 
-
 export default function SearchProductsPage() {
 	const user = auth.currentUser;
 
@@ -28,7 +27,7 @@ export default function SearchProductsPage() {
 		if (category !== null || input !== null) {
 			fetchProducts();
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [category, input]);
 
 	const fetchProducts = async () => {
@@ -39,7 +38,6 @@ export default function SearchProductsPage() {
 				id: doc.id,
 				...doc.data(),
 			}));
-			
 
 			const filtered = items.filter((item) => {
 				// name check
@@ -55,7 +53,7 @@ export default function SearchProductsPage() {
 					return matchesName || matchesKeywords;
 				}
 				// strict category match
-				const matchesCategory =	item.category === category;
+				const matchesCategory = item.category === category;
 
 				// category must match, and EITHER name OR keywords
 				return matchesCategory && (matchesName || matchesKeywords);
@@ -132,6 +130,10 @@ export default function SearchProductsPage() {
 			console.error("Error adding to cart:", err);
 		}
 	};
+	const handleCategory = (cat) => {
+		console.log(cat);
+		localStorage.setItem("relatedCategory", JSON.stringify(cat));
+	};
 
 	return (
 		<div>
@@ -176,6 +178,7 @@ export default function SearchProductsPage() {
 							<Link
 								href={`/products/${product.id}`}
 								key={product.id}
+								onClick={() => handleCategory(product.category)}
 								className=" h-80 p-1 "
 							>
 								<div className="relative  h-50 flex mb-2">

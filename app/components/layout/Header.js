@@ -201,6 +201,7 @@ export default function Header() {
 												type="radio"
 												name="language"
 												value={lang.code}
+												defaultChecked={languageCode === lang.code}
 												className="h-4 w-4 cursor-pointer"
 											/>
 											<span>
