@@ -112,7 +112,7 @@ export default function ProductsById() {
 		};
 
 		fetchProductData();
-	}, [params.id]); // Add productId as a dependency
+	}, [params.id, user]); // Add productId as a dependency
 
 	const handleClick = (url) => {
 		setImgUrls(url);
