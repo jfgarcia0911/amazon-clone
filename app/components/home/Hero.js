@@ -16,7 +16,10 @@ export default function Hero() {
 		if (user) {
 			// Retrieve recently viewed items from localStorage
 			const storedItems = JSON.parse(localStorage.getItem("recentView"));
+			if(storedItems.length > 0 ){
 			setRecentItems(storedItems.slice(0, 20));
+
+			}
 
 			const relatedItems = JSON.parse(
 				localStorage.getItem("relatedCategory")
