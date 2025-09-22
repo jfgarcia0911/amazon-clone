@@ -14,7 +14,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "react-toastify";
-
+import { Suspense } from "react";
 export default function SearchProductsPage() {
 	const user = auth.currentUser;
 
@@ -132,9 +132,8 @@ export default function SearchProductsPage() {
 	};
 	const handleCategory = (cat) => {
 		console.log(cat);
-		if(user){
-		localStorage.setItem("relatedCategory", JSON.stringify(cat));
-
+		if (user) {
+			localStorage.setItem("relatedCategory", JSON.stringify(cat));
 		}
 	};
 
@@ -173,52 +172,62 @@ export default function SearchProductsPage() {
 			</div>
 
 			<div>
-				<div className="grid grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-5 px-10 md:px-20  lg:px-30 xl:px-40 2xl:px-80 ">
-					{sortedProducts.map((product) => {
-						const price = product.pricing.costPrice.toFixed(2); // always 2 decimals
-						const [whole, decimal] = price.split(".");
-						return (
-							<Link
-								href={`/products/${product.id}`}
-								key={product.id}
-								onClick={() => handleCategory(product.category)}
-								className=" h-80 p-1 "
-							>
-								<div className="relative  h-50 flex mb-2">
-									<Image
-										src={product.images?.mainImage}
-										alt={product.name}
-										fill
-										className="object-contain shrink "
-									/>
-								</div>
-								<div className="text-sm  line-clamp-2 hover:text-orange-500 hover:underline">
-									{product.name}
-								</div>
-								<div className="text-xs relative">
-									{" "}
-									<span className="absolute top-1">
-										$
-									</span>{" "}
-									<span className="text-2xl ml-2">
-										{whole}
-									</span>
-									<span className="absolute top-1">
-										{decimal}
-									</span>
-								</div>
-								<button
-									onClick={(event) =>
-										handleAddToCart(event, product)
+				{/* Wrap product grid in Suspense */}
+				<Suspense
+					fallback={
+						<div className="text-center p-10">
+							Loading products...
+						</div>
+					}
+				>
+					<div className="grid grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5 px-10 md:px-20 lg:px-30 xl:px-40 2xl:px-80">
+						{sortedProducts.map((product) => {
+							const price = product.pricing.costPrice.toFixed(2);
+							const [whole, decimal] = price.split(".");
+							return (
+								<Link
+									href={`/products/${product.id}`}
+									key={product.id}
+									onClick={() =>
+										handleCategory(product.category)
 									}
-									className="text-xs bg-yellow-300 px-3 py-1 rounded-2xl cursor-pointer"
+									className="h-80 p-1"
 								>
-									Add to cart
-								</button>
-							</Link>
-						);
-					})}
-				</div>
+									<div className="relative h-50 flex mb-2">
+										<Image
+											src={product.images?.mainImage}
+											alt={product.name}
+											fill
+											className="object-contain shrink"
+										/>
+									</div>
+									<div className="text-sm line-clamp-2 hover:text-orange-500 hover:underline">
+										{product.name}
+									</div>
+									<div className="text-xs relative">
+										<span className="absolute top-1">
+											$
+										</span>
+										<span className="text-2xl ml-2">
+											{whole}
+										</span>
+										<span className="absolute top-1">
+											{decimal}
+										</span>
+									</div>
+									<button
+										onClick={(event) =>
+											handleAddToCart(event, product)
+										}
+										className="text-xs bg-yellow-300 px-3 py-1 rounded-2xl cursor-pointer"
+									>
+										Add to cart
+									</button>
+								</Link>
+							);
+						})}
+					</div>
+				</Suspense>
 			</div>
 		</div>
 	);
