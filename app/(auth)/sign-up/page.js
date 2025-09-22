@@ -3,10 +3,9 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { auth, db, googleProvider } from "../../firebase/config";
+import { auth, db } from "../../firebase/config";
 import { doc, setDoc } from "firebase/firestore";
-import { signInWithPopup } from "firebase/auth";
-import { useAuth } from "@/app/context/AuthContext ";
+import { useAuth } from "../../context/AuthContext ";
 
 export default function SignUpPage() {
 	const { user } = useAuth();
