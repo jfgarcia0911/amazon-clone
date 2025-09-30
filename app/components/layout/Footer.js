@@ -6,7 +6,7 @@ export default function Footer() {
 	const scrollTop = () => {
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	};
-	
+
 	return (
 		<div className="text-white w-full relative flex flex-col text-nowrap">
 			{/* First layer */}
@@ -17,82 +17,90 @@ export default function Footer() {
 				Back to top
 			</div>{" "}
 			{/* Second layer */}
-			<div className="flex justify-center  space-x-30 py-12 bg-gray-800">
-				<div>
-					<h1 className="font-bold mb-2">Get to Know Us</h1>
-					<div className="opacity-80 space-y-2  w-40">
-						<p>Careers</p>
-						<p>Blog</p>
-						<p>About Amazon</p>
-						<p>Investor Relations</p>
-						<p>Amazon Devices</p>
-						<p>Amazon Science</p>
+			<div className="bg-gray-800 items-center flex justify-center ">
+				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center  py-12 px-20 lg:space-x-10">
+					<div className="text-center sm:text-left">
+						<h1 className="font-bold ">Get to Know Us</h1>
+						<div className="opacity-80 space-y-2  w-50">
+							<p>Careers</p>
+							<p>Blog</p>
+							<p>About Amazon</p>
+							<p>Investor Relations</p>
+							<p>Amazon Devices</p>
+							<p>Amazon Science</p>
+						</div>
 					</div>
-				</div>
-				<div>
-					<h1 className="font-bold mb-2">Make Money with Us</h1>
-					<div className="opacity-80 space-y-2 w-54">
-						<p>Sell products on Amazon</p>
-						<p>Sell on Amazon Business</p>
-						<p>Sell apps on Amazon</p>
-						<p>Become an Affiliate</p>
-						<p>Advertise Your Products </p>
-						<p>Self-Publish with Us</p>
-						<p>Host an Amazon Hub</p>
-						<p>
-							{`> See more Make Money`}{" "}
-							<span className="block leading-none">with Us</span>
-						</p>
+					<div className="text-center sm:text-left">
+						<h1 className="font-bold mb-2">Make Money with Us</h1>
+						<div className="opacity-80 space-y-2 w-50">
+							<p>Sell products on Amazon</p>
+							<p>Sell on Amazon Business</p>
+							<p>Sell apps on Amazon</p>
+							<p>Become an Affiliate</p>
+							<p>Advertise Your Products </p>
+							<p>Self-Publish with Us</p>
+							<p>Host an Amazon Hub</p>
+							<p>
+								{`> See more Make Money`}{" "}
+								<span className="block leading-none">
+									with Us
+								</span>
+							</p>
+						</div>
 					</div>
-				</div>
-				<div>
-					<h1 className="font-bold mb-2">Amazon Payment Products</h1>
-					<div className="opacity-80 space-y-2  w-50">
-						<p>Amazon Business Card</p>
-						<p>Shop with Points</p>
-						<p>Reload Your Balance</p>
-						<p>Amazon Currency Converter</p>
+					<div className="text-center sm:text-left">
+						<h1 className="font-bold mb-2">
+							Amazon Payment Products
+						</h1>
+						<div className="opacity-80 space-y-2  w-50">
+							<p>Amazon Business Card</p>
+							<p>Shop with Points</p>
+							<p>Reload Your Balance</p>
+							<p>Amazon Currency Converter</p>
+						</div>
 					</div>
-				</div>
-				<div>
-					<h1 className="font-bold mb-2">Let Us Help You</h1>
-					<div className="opacity-80 space-y-2  w-50">
-						<p>
-							Amazon and COVID-
-							<span className="block leading-none">19</span>
-						</p>
-						<p>Your Account</p>
-						<p>Your Orders</p>
-						<p>
-							Shipping Rates &{" "}
-							<span className="block leading-none">Policies</span>
-						</p>
-						<p>
-							Returns &{" "}
-							<span className="block leading-none">
-								Replacements
-							</span>
-						</p>
-						<p>
-							Manage Your
-							<span className="block leading-none">
-								Content and Devices
-							</span>
-						</p>
-						<p>Help</p>
+					<div className="text-center sm:text-left ">
+						<h1 className="font-bold mb-2">Let Us Help You</h1>
+						<div className="opacity-80 space-y-2  w-50">
+							<p>
+								Amazon and COVID-
+								<span className="block leading-none">19</span>
+							</p>
+							<p>Your Account</p>
+							<p>Your Orders</p>
+							<p>
+								Shipping Rates &{" "}
+								<span className="block leading-none">
+									Policies
+								</span>
+							</p>
+							<p>
+								Returns &{" "}
+								<span className="block leading-none">
+									Replacements
+								</span>
+							</p>
+							<p>
+								Manage Your
+								<span className="block leading-none">
+									Content and Devices
+								</span>
+							</p>
+							<p>Help</p>
+						</div>
 					</div>
 				</div>
 			</div>
 			{/* Third layer */}
-			<div className="flex items-center justify-center space-x-30  py-10 bg-gray-800 border-t border-gray-500 text-gray-300">
-				<div>
+			<div className="flex  items-center justify-center space-x-30  py-10 bg-gray-800 border-t border-gray-500 text-gray-300">
+				<div className="hidden md:block">
 					<Image
 						src="/amazon.png"
 						alt="Logo"
 						width={100}
 						height={10}
 						priority
-						className="object-contain"
+						className="object-contain mr-0"
 					/>
 				</div>
 				<div className="flex space-x-2">
@@ -118,16 +126,16 @@ export default function Footer() {
 				</div>
 			</div>
 			{/* Fourth layer*/}
-			<div className="py-12 bg-gray-900 brightness-70 space-y-3 text-sm">
-				<div className="flex  justify-center space-x-15  ">
-					<div className="w-29">
+			<div className="bg-gray-900 brightness-70 items-center flex justify-center px-20">
+				<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7 gap-5 justify-items-start py-12 max-w-7xl lg:space-x-5  text-sm">
+					<div className=" ">
 						<h1>Amazon Music</h1>
 						<p className="leading-none text-gray-400">
 							Stream millions{" "}
 							<span className="block leading-none">of songs</span>
 						</p>
 					</div>
-					<div className="w-29">
+					<div className=" ">
 						<h1>Amazon Ads</h1>
 						<p className="leading-none text-gray-400">
 							Reach customers
@@ -139,7 +147,7 @@ export default function Footer() {
 							</span>
 						</p>
 					</div>
-					<div className="w-29">
+					<div className=" ">
 						<h1>6pm</h1>
 						<p className="leading-none text-gray-400">
 							Score deals
@@ -148,7 +156,7 @@ export default function Footer() {
 							</span>
 						</p>
 					</div>
-					<div className="w-29">
+					<div className=" ">
 						<h1>AbeBooks</h1>
 						<p className="leading-none text-gray-400">
 							Books, art
@@ -157,7 +165,8 @@ export default function Footer() {
 							</span>
 						</p>
 					</div>
-					<div className="w-29">
+
+					<div className=" ">
 						<h1>ACX</h1>
 						<p className="leading-none text-gray-400">
 							Audiobook
@@ -170,14 +179,14 @@ export default function Footer() {
 							</span>
 						</p>
 					</div>
-					<div className="w-29">
+					<div className=" ">
 						<h1>Sell on Amazon</h1>
 						<p className="leading-none text-gray-400">
 							Start a Selling
 							<span className="block leading-none"> Account</span>
 						</p>
 					</div>
-					<div className="w-29">
+					<div className=" ">
 						<h1>Veeqo</h1>
 						<p className="leading-none text-gray-400">
 							Shipping Software
@@ -191,9 +200,7 @@ export default function Footer() {
 							</span>
 						</p>
 					</div>
-				</div>
-				<div className="flex  justify-center space-x-15 ">
-					<div className="w-29">
+					<div className=" ">
 						<h1>Amazon Business </h1>
 						<p className="leading-none text-gray-400">
 							Everything For
@@ -203,7 +210,8 @@ export default function Footer() {
 							</span>
 						</p>
 					</div>
-					<div className="w-29">
+
+					<div className=" ">
 						<h1>Amazon Global </h1>
 						<p className="leading-none text-gray-400">
 							Ship Orders
@@ -212,10 +220,10 @@ export default function Footer() {
 							</span>
 						</p>
 					</div>
-					<div className="w-29">
-						<h1>Amazon Web  
+					<div className=" ">
+						<h1>
+							Amazon Web
 							<span className="block leading-none">Services</span>
-
 						</h1>
 						<p className="leading-none text-gray-400">
 							Scalable Cloud
@@ -225,7 +233,7 @@ export default function Footer() {
 							<span className="block leading-none">Services</span>
 						</p>
 					</div>
-					<div className="w-29">
+					<div className=" ">
 						<h1>Audible </h1>
 						<p className="leading-none text-gray-400">
 							Listen to Books &
@@ -236,21 +244,22 @@ export default function Footer() {
 							</span>
 						</p>
 					</div>
-					<div className="w-29">
+					<div className=" ">
 						<h1>Box Office Mojo </h1>
 						<p className="leading-none text-gray-400">Find Movie</p>
 						<p className="leading-none text-gray-400">
 							Box Office Data
 						</p>
 					</div>
-					<div className="w-29">
+
+					<div className=" ">
 						<h1>Goodreads </h1>
 						<p className="leading-none text-gray-400">
 							Book reviews <span className="block">&</span>{" "}
 							recommendations
 						</p>
 					</div>
-					<div className="w-29">
+					<div className=" ">
 						<h1>IMDb </h1>
 						<p className="leading-none text-gray-400">
 							Movies, TV{" "}
@@ -260,16 +269,22 @@ export default function Footer() {
 				</div>
 			</div>
 			{/* Fifth layer */}
-			<div className="flex justify-center space-x-5 bg-gray-900 brightness-70">
+			<div className="flex flex-col md:flex-row items-center space-y-3 md:space-y-0 justify-center space-x-5 bg-gray-900 brightness-70">
 				<div>Conditions of Use</div>
 				<div>Privacy Notice</div>
 				<div>Consumer Health Data Privacy Disclosure</div>
 				<div>Your Ads Privacy Choices</div>
 			</div>
-			<div className="flex justify-center space-x-5 bg-gray-900 brightness-70 pb-10">
-				2025 Amazon Clone. This project is not affiliated with or endorsed by Amazon.  
-        Created solely for study, skill demonstration, and portfolio use.  
-        If you are a recruiter or employer, please review this as part of my job search portfolio.
+			<div className="flex justify-center bg-gray-900 brightness-70 pb-10 px-4 ">
+				<div className="text-sm mt-5">
+					<p className="text-wrap px-5 text-center">
+						2025 Amazon Clone. This project is not affiliated with
+						or endorsed by Amazon. Created solely for study, skill
+						demonstration, and portfolio use. If you are a recruiter
+						or employer, please review this as part of my job search
+						portfolio.
+					</p>
+				</div>
 			</div>
 		</div>
 	);
