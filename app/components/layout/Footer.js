@@ -267,7 +267,9 @@ export default function Footer() {
 				<div>Your Ads Privacy Choices</div>
 			</div>
 			<div className="flex justify-center space-x-5 bg-gray-900 brightness-70 pb-10">
-				© 1996-2025, Amazon.com, Inc. or its affiliates
+				2025 Amazon Clone. This project is not affiliated with or endorsed by Amazon.  
+        Created solely for study, skill demonstration, and portfolio use.  
+        If you are a recruiter or employer, please review this as part of my job search portfolio.
 			</div>
 		</div>
 	);
