@@ -7,7 +7,7 @@ export default function SearchBar() {
 	const inputRef = useRef();
 	const [categoryWidth, setCategoryWidth] = useState(60);
 	const buttonRef = useRef();
-    const router = useRouter();
+	const router = useRouter();
 	const [category, setCategory] = useState("All");
 	const [open, setOpen] = useState(false);
 	const dropdownRef = useRef();
@@ -42,7 +42,6 @@ export default function SearchBar() {
 		"Women's Fashion",
 	];
 	const [products, setProducts] = useState([]);
-	
 
 	const handleCategory = (category) => {
 		setCategory(category);
@@ -57,8 +56,12 @@ export default function SearchBar() {
 
 				q = query(
 					collection(db, "amazon-products"),
-					where("searchKeywords", "array-contains", inputRef.current.value.toLowerCase()),
-                    orderBy("timestamps.createdAt", "desc"),
+					where(
+						"searchKeywords",
+						"array-contains",
+						inputRef.current.value.toLowerCase(),
+					),
+					orderBy("timestamps.createdAt", "desc"),
 				);
 			} else if (
 				selectedCategory == "All Departments" ||
@@ -70,7 +73,7 @@ export default function SearchBar() {
 				// Filter by category
 				q = query(
 					collection(db, "amazon-products"),
-					where("category", "==", selectedCategory)
+					where("category", "==", selectedCategory),
 				);
 			}
 			const querySnapshot = await getDocs(q);
@@ -79,7 +82,9 @@ export default function SearchBar() {
 				...doc.data(),
 			}));
 			setProducts(items);
-            router.push(`/search/products?category=${encodeURIComponent(selectedCategory)}&input=${inputRef.current.value}`);
+			router.push(
+				`/search/products?category=${encodeURIComponent(selectedCategory)}&input=${inputRef.current.value}`,
+			);
 		} catch (err) {
 			console.error("Error fetching products:", err);
 		}
@@ -112,10 +117,13 @@ export default function SearchBar() {
 	}, []);
 	return (
 		<div className="relative flex flex-1 text-black   h-10">
-			<form  onSubmit={(e) => {
-    e.preventDefault();
-    fetchProducts(category);
-  }}  className="flex flex-1  bg-white rounded-sm focus-within:ring-3 focus-within:ring-yellow-500">
+			<form
+				onSubmit={(e) => {
+					e.preventDefault();
+					fetchProducts(category);
+				}}
+				className="flex flex-1  bg-white rounded-sm focus-within:ring-3 focus-within:ring-yellow-500"
+			>
 				<input
 					ref={inputRef}
 					type="text"
