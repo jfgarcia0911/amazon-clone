@@ -220,7 +220,7 @@ export default function CartPage() {
 												$
 											</span>
 											<span className="text-xl ml-2">
-												{whole}
+												{whole * item.quantity}
 											</span>
 											<span className="absolute top-0.75 text-xs">
 												{decimal}
