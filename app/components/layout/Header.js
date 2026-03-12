@@ -86,6 +86,20 @@ export default function Header() {
 		localStorage.setItem("relatedCategory", JSON.stringify(''));
 	};
 
+  const handleSwitchAccount = () => {
+		signOut(auth)
+			.then(() => {
+				console.log("User signed out");
+			})
+			.catch((error) => {
+				console.error("Error signing out:", error);
+			});
+		localStorage.setItem("recentView", JSON.stringify([]));
+		localStorage.setItem("relatedCategory", JSON.stringify(''));
+
+    router.push("/sign-in");
+	};
+
 	useEffect(() => {
 		if (!user) {
 			setCartQuantity(0);
@@ -231,7 +245,7 @@ export default function Header() {
 							<div className="absolute bg-white h-4 w-4 rotate-45 top-4 -left-2  hidden   group-hover:block "></div>
 						</div>
 						{/* Tooltip container */}
-						<div className="absolute hidden   group-hover:block  bg-white w-150 h-105 top-12 -left-80 z-30 border border-gray-300 rounded-lg">
+						<div className="absolute hidden   group-hover:block  bg-white w-150 h-60 top-12 -left-80 z-30 border border-gray-300 rounded-lg">
 							{/* <!-- Tooltip content --> */}
 							{user ? (
 								<div className="flex  items-center justify-between px-8 py-7 text-black">
@@ -288,13 +302,20 @@ export default function Header() {
 									<h1 className="font-bold text-black">
 										Your Lists
 									</h1>
-									<div className="text-sm space-y-1">
-										<p className="hover:underline hover:text-orange-500 cursor-pointer">
-											Create a List
-										</p>
-										<p className="hover:underline hover:text-orange-500 cursor-pointer">
-											Find a list or Registry
-										</p>
+									<div className="text-sm space-y-1 flex flex-col">
+										<Link href={"/seller"} className="hover:underline hover:text-orange-500 cursor-pointer">
+											My products
+										</Link>
+										{user ? (
+											<Link
+												href={"/products/add"}
+												className="hover:underline hover:text-orange-500 cursor-pointer"
+											>
+												Add product
+											</Link>
+										) : (
+											""
+										)}
 									</div>
 								</div>
 								<div className=" w-full space-y-2">
@@ -304,7 +325,7 @@ export default function Header() {
 									<div className="text-sm space-y-1">
 										{user ? (
 											<>
-												<p className="hover:underline hover:text-orange-500 cursor-pointer">
+												<p onClick={handleSwitchAccount} className="hover:underline hover:text-orange-500 cursor-pointer">
 													Switch account
 												</p>
 												<p
@@ -317,49 +338,7 @@ export default function Header() {
 										) : (
 											""
 										)}
-										{user ? (
-											<Link
-												href={"/products/add"}
-												className="hover:underline hover:text-orange-500 cursor-pointer"
-											>
-												Add product
-											</Link>
-										) : (
-											""
-										)}
-										<p className="hover:underline hover:text-orange-500 cursor-pointer">
-											Account
-										</p>
-										<p className="hover:underline hover:text-orange-500 cursor-pointer">
-											Orders
-										</p>
-										<p className="hover:underline hover:text-orange-500 cursor-pointer">
-											Recommendations
-										</p>
-										<p className="hover:underline hover:text-orange-500 cursor-pointer">
-											Browsing History
-										</p>
-										<p className="hover:underline hover:text-orange-500 cursor-pointer">
-											Watchlist
-										</p>
-										<p className="hover:underline hover:text-orange-500 cursor-pointer">
-											Video Purchases & Rentals
-										</p>
-										<p className="hover:underline hover:text-orange-500 cursor-pointer">
-											Kindle Unlimited
-										</p>
-										<p className="hover:underline hover:text-orange-500 cursor-pointer">
-											Content & Devices
-										</p>
-										<p className="hover:underline hover:text-orange-500 cursor-pointer">
-											Subscribe & Save Itemms
-										</p>
-										<p className="hover:underline hover:text-orange-500 cursor-pointer">
-											Membership & Subscriptions
-										</p>
-										<p className="hover:underline hover:text-orange-500 cursor-pointer">
-											Music Library
-										</p>
+																			
 									</div>
 								</div>
 							</div>
