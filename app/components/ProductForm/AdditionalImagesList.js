@@ -45,7 +45,7 @@ export default function AdditionalImagesList({
 							<Loader2 className="absolute top-2 right-3 animate-spin h-4 w-4 text-blue-500" />
 						)}
 						{status === "success" && (
-							<Check className="absolute top-2 right-3 h-4 w-4 text-green-600" />
+							<Check className="absolute top-3 right-3 h-4 w-4 text-green-600" />
 						)}
 					</div>
 				);

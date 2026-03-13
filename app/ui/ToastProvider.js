@@ -15,6 +15,8 @@ export default function ToastProvider() {
 			pauseOnHover
 			theme="light"
 			toastClassName="p-10" // Add Tailwind padding
+      style={{ marginTop: "70px" }} // custom offset
+
 		/>
 	);
 }

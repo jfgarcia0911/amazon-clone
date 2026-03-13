@@ -35,7 +35,7 @@ export default function ProductsById() {
 				const price = cartSnap.data().price;
 				const subTotal = cartSnap.data().subTotal;
 				await updateDoc(cartItemRef, {
-					quantity: currentQty + 1,
+					quantity: currentQty + selectedQty,
 					subTotal: subTotal + price,
 				});
 			} else {
@@ -68,40 +68,34 @@ export default function ProductsById() {
 
 					if (docSnap.exists()) {
 						setProductData(docSnap.data());
-						const price = docSnap
-							.data()
-							.pricing.costPrice.toFixed(2); // always 2 decimals
+						const price = docSnap.data().pricing.costPrice.toFixed(2); // always 2 decimals
 						const [w, d] = price.split(".");
 						setWhole(w);
 						setDecimal(d);
 
-						if(user){
+						if (user) {
 							// These items will be shown as recent views on the homepage.
-						const storedItems =
-							JSON.parse(localStorage.getItem("recentView")) ||
-							[];
+							const storedItems =
+								JSON.parse(localStorage.getItem("recentView")) || [];
 
-						const newItem = {
-							id: params.id,
-							mainImage: docSnap.data().images.mainImage,
-							name: docSnap.data().name
-						};
+							const newItem = {
+								id: params.id,
+								mainImage: docSnap.data().images.mainImage,
+								name: docSnap.data().name,
+							};
 
-						// Check if item already exists
-						const exists = storedItems.some(
-							(item) => item.id === newItem.id
-						);
+							// Check if item already exists
+							const exists = storedItems.some((item) => item.id === newItem.id);
 
-						let updatedItems = storedItems;
-						if (!exists) {
-							updatedItems = [newItem, ...storedItems];
-							localStorage.setItem(
-								"recentView",
-								JSON.stringify(updatedItems)
-							);
+							let updatedItems = storedItems;
+							if (!exists) {
+								updatedItems = [newItem, ...storedItems];
+								localStorage.setItem(
+									"recentView",
+									JSON.stringify(updatedItems),
+								);
+							}
 						}
-						}
-
 					} else {
 						console.log("No such document!");
 					}
@@ -126,13 +120,8 @@ export default function ProductsById() {
 					<div className="py-5 space-y-2 space-x-2">
 						<div className="relative border border-gray-300 w-10 rounded-sm ">
 							<Image
-								onClick={() =>
-									handleClick(productData.images?.mainImage)
-								}
-								src={
-									productData.images?.mainImage ||
-									"/amazon.png"
-								}
+								onClick={() => handleClick(productData.images?.mainImage)}
+								src={productData.images?.mainImage || "/amazon.png"}
 								alt={productData.name}
 								width={50}
 								height={50}
@@ -140,32 +129,26 @@ export default function ProductsById() {
 							/>
 						</div>
 
-						{productData.images?.additionalImages?.map(
-							(imgUrl, index) => (
-								<div
-									onClick={() => handleClick(imgUrl)}
-									key={index}
-									className="border border-gray-300 w-10 rounded-sm p-.5"
-								>
-									<Image
-										src={imgUrl}
-										alt={productData.name}
-										width={50}
-										height={50}
-										className="h-10"
-									/>
-								</div>
-							)
-						)}
+						{productData.images?.additionalImages?.map((imgUrl, index) => (
+							<div
+								onClick={() => handleClick(imgUrl)}
+								key={index}
+								className="border border-gray-300 w-10 rounded-sm p-.5"
+							>
+								<Image
+									src={imgUrl}
+									alt={productData.name}
+									width={50}
+									height={50}
+									className="h-10"
+								/>
+							</div>
+						))}
 					</div>
 					{/* Main Image */}
 					<div className="w-120 py-5">
 						<Image
-							src={
-								imgUrls ||
-								productData.images?.mainImage ||
-								"/amazon.png"
-							}
+							src={imgUrls || productData.images?.mainImage || "/amazon.png"}
 							alt={productData.name}
 							width={500}
 							height={500}
@@ -185,24 +168,17 @@ export default function ProductsById() {
 							<span className="absolute top-0.5">{decimal}</span>
 						</div>
 						<div className="text-xl   border-b border-gray-300 pb-4 pt-2">
-							<div className="mb-1 font-semibold">
-								About this item
-							</div>
+							<div className="mb-1 font-semibold">About this item</div>
 							{/* Product Descriptions */}
 							<div className="ml-5 text-gray-800">
 								<ul className="list-disc ">
-									{productData.description.map(
-										(keyword, index) => (
-											<li
-												key={index}
-												className="text-sm "
-											>
-												<div className="line-clamp-3 hover:line-clamp-none">
-													{keyword}
-												</div>
-											</li>
-										)
-									)}
+									{productData.description.map((keyword, index) => (
+										<li key={index} className="text-sm ">
+											<div className="line-clamp-3 hover:line-clamp-none">
+												{keyword}
+											</div>
+										</li>
+									))}
 								</ul>
 							</div>
 						</div>
@@ -213,21 +189,17 @@ export default function ProductsById() {
 						<div className="text-sm relative">
 							{" "}
 							<span className="absolute top-0.5">$</span>{" "}
-							<span className="text-3xl ml-2">{whole}</span>
+							<span className="text-3xl ml-2">{whole * selectedQty}</span>
 							<span className="absolute top-0.5">{decimal}</span>
 						</div>
 						{/* Stock Status */}
 						<div
 							className={`${
-								productData.stockQuantity
-									? "text-green-700"
-									: "text-red-700"
+								productData.stockQuantity ? "text-green-700" : "text-red-700"
 							}  text-xl my-3`}
 						>
 							{" "}
-							{productData.stockQuantity
-								? "In Stock"
-								: "Out of Stock"}
+							{productData.stockQuantity ? "In Stock" : "Out of Stock"}
 						</div>
 						{/* Quantity */}
 						<div className="border border-gray-300 h-8 text-sm w-full px-2 rounded-lg relative">
@@ -238,9 +210,7 @@ export default function ProductsById() {
 
 							<select
 								value={selectedQty}
-								onChange={(e) =>
-									setSelectedQty(Number(e.target.value))
-								}
+								onChange={(e) => setSelectedQty(Number(e.target.value))}
 								className="w-full  h-8 opacity-0 absolute left-0 top-0 cursor-pointer"
 							>
 								{Array.from({ length: 30 }, (_, i) => (
