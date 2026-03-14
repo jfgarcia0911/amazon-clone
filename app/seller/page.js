@@ -20,6 +20,7 @@ export default function SellerPage() {
 		if (user) {
 			fetchSellerProducts(user.uid);
 		}
+    
 	}, [user, fetchSellerProducts]);
 
 	return (

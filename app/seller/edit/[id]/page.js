@@ -7,9 +7,16 @@ import { useAuth } from "../../../context/AuthContext ";
 import { toast } from "react-toastify";
 import Header from "../../../components/layout/Header";
 import { Loader2 } from "lucide-react";
-import { useParams,  useRouter} from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import ProductNameField from "../../../components/ProductForm/ProductNameField";
 import ProductDescriptionField from "../../../components/ProductForm/ProductDescriptionField";
+import SearchField from "../../../components/ProductForm/SearchField";
+import ProductBrandField from "../../../components/ProductForm/ProductBrandField";
+import CategoryField from "../../../components/ProductForm/CategoryField";
+import PricingField from "../../../components/ProductForm/PricingField";
+import StockField from "../../../components/ProductForm/StockField";
+import MainImageUpload from "../../../components/ProductForm/MainImageUpload";
+import AdditionalImagesList from "../../../components/ProductForm/AdditionalImagesList";
 import { useProductForm } from "../../../hooks/useProductForm";
 
 export default function EditProduct() {
@@ -17,9 +24,26 @@ export default function EditProduct() {
 	const { user } = useAuth();
 	const router = useRouter();
 	const [loading, setLoading] = useState(true);
-	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const {formData, setFormData, handleChange, handleConfirmDescription,handleEditDescription, errors} = useProductForm(params.id)
+	const {
+		formData,
+		setFormData,
+		handleChange,
+		handleAddFieldValue,
+		handleEditFieldArray,
+		handleSubmit,
+		handleChangeAttribute,
+		handleSelect,
+		handleChangePricing,
+		handleChangeImages,
+    handleChangeAddImages,
+    uploadStatus,
+		emptyImageValue,
+		status,
+		isSubmitting,
+		errors,
+    updateImageInputs,
+	} = useProductForm(params.id);
 
 	// Fetch product data on mount
 	useEffect(() => {
@@ -42,30 +66,8 @@ export default function EditProduct() {
 			}
 		};
 		if (user) fetchProduct();
-	}, [params.id, user, router, setFormData]);
-
-	// Submit update
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		setIsSubmitting(true);
-		try {
-			const docRef = doc(db, "amazon-products", params.id);
-			await updateDoc(docRef, {
-				...formData,
-				timestamps: {
-					...formData.timestamps,
-					updatedAt: new Date(),
-				},
-			});
-			toast.success("Product updated successfully!");
-			router.push("/seller"); // or stay on the page
-		} catch (error) {
-			console.error("Error updating product:", error);
-			toast.error("Update failed. Please try again.");
-		} finally {
-			setIsSubmitting(false);
-		}
-	};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [params.id, user, router]);
 
 	if (loading) {
 		return (
@@ -98,67 +100,68 @@ export default function EditProduct() {
 						{/* Description */}
 						<ProductDescriptionField
 							formData={formData.description}
-							onClick={handleConfirmDescription}
 							error={errors.description}
-              onEdit={handleEditDescription}   
+							onEdit={handleEditFieldArray}
+							onClick={handleAddFieldValue}
 						/>
 
 						{/* Search keywords */}
-						{/* <SearchField
-                    formData={formData.searchKeywords}
-                    error={errors.searchKeywords}
-                    onClick={handleConfirmKeywords}
-                  /> */}
+						<SearchField
+							formData={formData.searchKeywords}
+							error={errors.searchKeywords}
+							onClick={handleAddFieldValue}
+							onEdit={handleEditFieldArray}
+						/>
 
 						{/* Brand */}
-						{/* <ProductBrandField
-                    formData={formData.attributes.brand}
-                    onChange={handleChangeAttribute}
-                    error={errors.brand}
-                  /> */}
+						<ProductBrandField
+							formData={formData.attributes.brand}
+							onChange={handleChangeAttribute}
+							error={errors.brand}
+						/>
 
 						{/* Category */}
-						{/* <CategoryField
-                    formData={formData.category}
-                    onSelect={handleSelect}
-                    error={errors.category}
-                  /> */}
+						<CategoryField
+							formData={formData.category}
+							onSelect={handleSelect}
+							error={errors.category}
+						/>
 
 						{/* Pricing */}
-						{/* <PricingField
-                    formData={formData.pricing.costPrice}
-                    onChange={handleChangePricing}
-                    error={errors.costPrice}
-                  /> */}
+						<PricingField
+							formData={formData.pricing.costPrice}
+							onChange={handleChangePricing}
+							error={errors.costPrice}
+						/>
 
 						{/* Stock Quantity */}
-						{/* <StockField
-                    formData={formData.stockQuantity}
-                    onChange={handleChange}
-                    error={errors.stockQuantity}
-                  /> */}
+						<StockField
+							formData={formData.stockQuantity}
+							onChange={handleChange}
+							error={errors.stockQuantity}
+						/>
 
 						{/* Main Image */}
-						{/* <MainImageUpload
-                    onChange={handleChangeImages}
-                    error={errors.mainImage}
-                    status={status}
-                    imageRef={emptyImageValue}
-                  /> */}
+						<MainImageUpload
+							onChange={handleChangeImages}
+							error={errors.mainImage}
+							status={status}
+							imageRef={emptyImageValue}
+						/>
 
 						{/* Additional Images */}
-						{/* <AdditionalImagesList
-                    onClick={updateImageInputs}
-                    formData={formData.images.additionalImages}
-                    onChange={handleChangeAddImages}
-                    uploadStatus={uploadStatus}
-                  /> */}
+						<AdditionalImagesList
+							onClick={updateImageInputs}
+							formData={formData.images.additionalImages}
+							onChange={handleChangeAddImages}
+							uploadStatus={uploadStatus}
+						/>
 
 						{/* Submit Button */}
 						<div className="text-center flex">
-              <button
+							<button
 								type="button"
-                onClick={() => router.push("/seller")}
+								onClick={() => router.push("/seller")}
 								className="bg-red-500 text-white rounded-md p-2 w-100 mt-5 cursor-pointer hover:bg-red-600 mx-auto flex justify-center"
 							>
 								{isSubmitting ? (

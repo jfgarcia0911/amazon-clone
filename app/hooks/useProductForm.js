@@ -8,6 +8,7 @@ import {
 	query,
 	where,
 	getDocs,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { toast } from "react-toastify";
@@ -110,26 +111,15 @@ export const useProductForm = (productId = null) => {
 	};
 
 	// Confirm handlers for description and keywords
-	const handleConfirmDescription = (value, e) => {
+	const handleAddFieldValue = (field, value, e) => {
 		e.preventDefault();
 		if (value.trim()) {
 			setFormData((prev) => ({
 				...prev,
-				description: [...prev.description, value.trim()],
+				[field]: [...prev[field], value.trim()],
 			}));
 		}
-		clearFieldError("description");
-	};
-
-	const handleConfirmKeywords = (value, e) => {
-		e.preventDefault();
-		if (value.trim()) {
-			setFormData((prev) => ({
-				...prev,
-				searchKeywords: [...prev.searchKeywords, value.trim()],
-			}));
-		}
-		clearFieldError("searchKeywords");
+		clearFieldError(field);
 	};
 
 	// Add/remove additional image inputs
@@ -259,23 +249,24 @@ export const useProductForm = (productId = null) => {
 		}
 	};
 
-	const handleEditDescription = (index, newValue) => {
+  // Handles editing array-based form fields (e.g., keywords, descriptions).
+	const handleEditFieldArray = (field,index, newValue) => {
 		const trimmed = newValue.trim();
 		setFormData((prev) => {
 			if (trimmed === "") {
 				// Remove the item completely
-				const updatedDescriptions = prev.description.filter(
+				const updatedArray = prev[field].filter(
 					(_, i) => i !== index,
 				);
-				return { ...prev, description: updatedDescriptions };
+				return { ...prev, [field]: updatedArray };
 			} else {
 				// Update the item with the new value
-				const updatedDescriptions = [...prev.description];
-				updatedDescriptions[index] = trimmed;
-				return { ...prev, description: updatedDescriptions };
+				const updatedArray = [...prev[field]];
+				updatedArray[index] = trimmed;
+				return { ...prev, [field]: updatedArray };
 			}
 		});
-		clearFieldError("description");
+		clearFieldError(field);
 	};
 
 	const resetForm = () => {
@@ -299,7 +290,7 @@ export const useProductForm = (productId = null) => {
 	return {
 		formData,
 		setFormData,
-		handleEditDescription,
+		handleEditFieldArray,
 		status,
 		products,
 		fetchSellerProducts,
@@ -313,8 +304,7 @@ export const useProductForm = (productId = null) => {
 		handleChangePricing,
 		handleChangeImages,
 		handleChangeAddImages,
-		handleConfirmDescription,
-		handleConfirmKeywords,
+		handleAddFieldValue,
 		handleSelect,
 		updateImageInputs,
 		handleSubmit,

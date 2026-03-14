@@ -27,8 +27,7 @@ export default function AddProduct() {
 		handleChangePricing,
 		handleChangeImages,
 		handleChangeAddImages,
-		handleConfirmDescription,
-		handleConfirmKeywords,
+		handleAddFieldValue,
 		handleSelect,
 		updateImageInputs,
 		handleSubmit,
@@ -58,7 +57,7 @@ export default function AddProduct() {
 						{/* Description */}
 						<ProductDescriptionField
 							formData={formData.description}
-							onClick={handleConfirmDescription}
+							onClick={handleAddFieldValue}
 							error={errors.description}
 						/>
 
@@ -66,7 +65,7 @@ export default function AddProduct() {
 						<SearchField
 							formData={formData.searchKeywords}
 							error={errors.searchKeywords}
-							onClick={handleConfirmKeywords}
+							onClick={handleAddFieldValue}
 						/>
 
 						{/* Brand */}
