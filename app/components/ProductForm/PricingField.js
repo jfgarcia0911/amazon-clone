@@ -16,6 +16,7 @@ export default function PricingField({
 				<input
 					type="number"
 					id={id}
+          step="0.01"
 					value={formData}
 					min={0}
 					onChange={onChange}
