@@ -14,7 +14,7 @@ export default function ProductDescriptionField({
 
 	const handleAdd = (e) => {
 		if (onClick) {
-			onClick(inputDetailsRef.current.value, e);
+			onClick("description",inputDetailsRef.current.value, e);
 		}
 		inputDetailsRef.current.value = "";
 	};
@@ -26,7 +26,7 @@ export default function ProductDescriptionField({
 
 	const confirmEdit = () => {
 		if (onEdit) {
-			onEdit(editingIndex, editValue); // pass index + new value to parent
+			onEdit("description",editingIndex, editValue); // pass index + new value to parent
 		}
 		setEditingIndex(null);
 		setEditValue("");
