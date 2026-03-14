@@ -9,43 +9,18 @@ import { useAuth } from "../context/AuthContext ";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { Loader2, Pencil } from "lucide-react";
+import { useProductForm } from "../hooks/useProductForm";
+
 export default function SellerPage() {
-	const [products, setProducts] = useState([]);
 	const { user } = useAuth();
 	const [isLoading, setIsLoading] = useState(null);
+	const { products, fetchSellerProducts, handleDelete } = useProductForm();
 
 	useEffect(() => {
-		if (!user) {
-			return;
+		if (user) {
+			fetchSellerProducts(user.uid);
 		}
-
-		const userId = user.uid;
-		fetchSellerProducts(userId);
-	}, [user]);
-
-	const fetchSellerProducts = async (userId) => {
-		try {
-			// Create a query against the collection
-			const q = query(
-				collection(db, "amazon-products"),
-				where("userId", "==", userId),
-			);
-
-			// Execute the query
-			const querySnapshot = await getDocs(q);
-
-			// Map results into an array
-			const products = querySnapshot.docs.map((doc) => ({
-				id: doc.id,
-				...doc.data(),
-			}));
-			console.log(products);
-			setProducts(products);
-		} catch (error) {
-			console.error("Error fetching products:", error);
-			return [];
-		}
-	};
+	}, [user, fetchSellerProducts]);
 
 	return (
 		<div className="overflow-hidden">
@@ -58,8 +33,7 @@ export default function SellerPage() {
 				<div className="mt-20 justify-center items-center xl:items-start max-w-screen flex flex-col xl:flex-row">
 					<div className="space-y-4 px-10  ">
 						<h1 className="text-3xl mt-5  mb-4">My Products</h1>
-						<div className=" m-0 lg:w-200 xl:w-240 2xl:w-290 flex px-5 text-gray-500 text-sm top-auto">
-						</div>
+						<div className=" m-0 lg:w-200 xl:w-240 2xl:w-290 flex px-5 text-gray-500 text-sm top-auto"></div>
 						<div className="border border-gray-300 mb-4 flex flex-col lg:w-200 xl:w-240 2xl:w-290  rounded-lg">
 							{products.map((item) => {
 								// Only render items with quantity >= 1
@@ -74,7 +48,7 @@ export default function SellerPage() {
 										{/* Image */}
 										<Link
 											href={`/products/${item.id}`}
-											className="w-auto  items-center justify-center hidden md:block"
+											className="w-50  items-center justify-center hidden md:block"
 										>
 											<Image
 												src={item.images?.mainImage}
@@ -86,10 +60,10 @@ export default function SellerPage() {
 										</Link>
 
 										{/* Description */}
-										<div className="space-y-1">
+										<div className="space-y-1  ">
 											<Link
 												href={`/products/${item.id}`}
-												className=" md:w-80 lg:w-120 xl:w-160  2xl:w-180 line-clamp-2"
+												className=" md:w-80 lg:w-100 xl:w-150  2xl:w-180 line-clamp-2"
 											>
 												<h2 className="font-medium text-lg">{item.name}</h2>
 											</Link>
@@ -101,16 +75,12 @@ export default function SellerPage() {
 															: "text-red-700"
 													} text-xs`}
 												>
-													{item.stockQuantity ? "In Stock" : "Out of Stock"}
+													Stock remaining:
+													{item.stockQuantity}
 												</p>
 											</div>
-											<div>
-												<p className="text-xs text-gray-500 font-semibold">
-													FREE Shipping{" "}
-													<span className="font-normal">to Philippines.</span>
-												</p>
-											</div>
-											{/* Add or Less a quantity */}
+
+											{/* Update Delete Button */}
 											<div
 												className={`flex px-3 border-3 font-bold border-yellow-300 rounded-xl w-22 items-center justify-between mt-3 h-8`}
 											>
@@ -125,7 +95,7 @@ export default function SellerPage() {
 													/>
 												</Link>
 												<button
-													onClick={() => handleAddToCart(item, -1)}
+													onClick={() => handleDelete(item.id)}
 													className={`cursor-pointer `}
 												>
 													<Trash

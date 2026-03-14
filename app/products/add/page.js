@@ -1,12 +1,8 @@
 "use client";
 
 import Header from "../../components/layout/Header";
-import React, { useRef, useState } from "react";
-import { db } from "../../firebase/config";
-import { collection, addDoc } from "firebase/firestore";
-import { useAuth } from "../../context/AuthContext ";
-import { toast } from "react-toastify";
-import { Loader2, Check } from "lucide-react";
+import React from "react";
+import { Loader2  } from "lucide-react";
 import { useProductForm } from "../../hooks/useProductForm";
 import ProductNameField from "../../components/ProductForm/ProductNameField";
 import ProductDescriptionField from "../../components/ProductForm/ProductDescriptionField";
@@ -17,9 +13,7 @@ import PricingField from "../../components/ProductForm/PricingField";
 import StockField from "../../components/ProductForm/StockField";
 import MainImageUpload from "../../components/ProductForm/MainImageUpload";
 import AdditionalImagesList from "../../components/ProductForm/AdditionalImagesList";
-import { uploadFile } from "../../utils/uploadFile";
 export default function AddProduct() {
-	const { user } = useAuth();
 
 	const {
 		formData,

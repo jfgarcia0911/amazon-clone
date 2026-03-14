@@ -1,12 +1,21 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext ";
-import { collection, addDoc } from "firebase/firestore";
+import {
+	collection,
+	addDoc,
+	doc,
+	deleteDoc,
+	query,
+	where,
+	getDocs,
+} from "firebase/firestore";
 import { db } from "../firebase/config";
 import { toast } from "react-toastify";
 import { uploadFile } from "../utils/uploadFile";
 
-export const useProductForm = () => {
+export const useProductForm = (productId = null) => {
 	const { user } = useAuth();
+	const [products, setProducts] = useState([]);
 	const [status, setStatus] = useState("idle");
 	const [uploadStatus, setUploadStatus] = useState({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,7 +39,7 @@ export const useProductForm = () => {
 		setFormData((prev) => ({ ...prev, [id]: value }));
 		clearFieldError(id);
 	};
-	
+
 	const handleChangeAttribute = (e) => {
 		const { id, value } = e.target;
 		setFormData((prev) => ({
@@ -174,7 +183,7 @@ export const useProductForm = () => {
 		}
 	};
 
-	// Submit
+	// Submit (refactored to handle add or update)
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!validateForm()) {
@@ -183,19 +192,90 @@ export const useProductForm = () => {
 		}
 		setIsSubmitting(true);
 		try {
-			await addDoc(collection(db, "amazon-products"), {
-				userId: user.uid,
-				...formData,
-				timestamps: { createdAt: new Date(), updatedAt: new Date() },
-			});
-			toast.success("Product added successfully!");
-			resetForm();
+			if (productId) {
+				// Update existing product
+				const docRef = doc(db, "amazon-products", productId);
+				await updateDoc(docRef, {
+					...formData,
+					timestamps: {
+						...formData.timestamps,
+						updatedAt: new Date(),
+					},
+				});
+				toast.success("Product updated successfully!");
+			} else {
+				// Add new product
+				await addDoc(collection(db, "amazon-products"), {
+					userId: user.uid,
+					...formData,
+					timestamps: { createdAt: new Date(), updatedAt: new Date() },
+				});
+				toast.success("Product added successfully!");
+				resetForm();
+			}
 		} catch (error) {
-			console.error("Error adding product:", error);
-			alert("Error adding product. Please try again.");
+			console.error("Error saving product:", error);
+			toast.error("Error saving product. Please try again.");
 		} finally {
 			setIsSubmitting(false);
 		}
+	};
+
+	// Fetch seller products
+	const fetchSellerProducts = async (userId) => {
+		try {
+			const q = query(
+				collection(db, "amazon-products"),
+				where("userId", "==", userId),
+			);
+			const querySnapshot = await getDocs(q);
+			const products = querySnapshot.docs.map((doc) => ({
+				id: doc.id,
+				...doc.data(),
+			}));
+			setProducts(products);
+		} catch (error) {
+			console.error("Error fetching products:", error);
+			toast.error("Failed to fetch products");
+		}
+	};
+
+	// delete handler
+	const handleDelete = async (id) => {
+		if (!id) {
+			toast.error("No product to delete");
+			return;
+		}
+		setIsSubmitting(true);
+		try {
+			const docRef = doc(db, "amazon-products", id);
+			await deleteDoc(docRef);
+			toast.success("Product deleted successfully!");
+		} catch (error) {
+			console.error("Error deleting product:", error);
+			toast.error("Delete failed. Please try again.");
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
+
+	const handleEditDescription = (index, newValue) => {
+		const trimmed = newValue.trim();
+		setFormData((prev) => {
+			if (trimmed === "") {
+				// Remove the item completely
+				const updatedDescriptions = prev.description.filter(
+					(_, i) => i !== index,
+				);
+				return { ...prev, description: updatedDescriptions };
+			} else {
+				// Update the item with the new value
+				const updatedDescriptions = [...prev.description];
+				updatedDescriptions[index] = trimmed;
+				return { ...prev, description: updatedDescriptions };
+			}
+		});
+		clearFieldError("description");
 	};
 
 	const resetForm = () => {
@@ -218,11 +298,16 @@ export const useProductForm = () => {
 
 	return {
 		formData,
+		setFormData,
+		handleEditDescription,
 		status,
+		products,
+		fetchSellerProducts,
 		uploadStatus,
 		isSubmitting,
 		emptyImageValue,
 		errors,
+		handleDelete,
 		handleChange,
 		handleChangeAttribute,
 		handleChangePricing,
