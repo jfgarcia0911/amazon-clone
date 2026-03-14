@@ -42,7 +42,7 @@ export default function EditProduct() {
 			}
 		};
 		if (user) fetchProduct();
-	}, [params.id, user, router]);
+	}, [params.id, user, router, setFormData]);
 
 	// Submit update
 	const handleSubmit = async (e) => {
