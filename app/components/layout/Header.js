@@ -160,7 +160,7 @@ export default function Header() {
 							width={100}
 							height={10}
 							priority
-							className="object-contain"
+							className="object-contain flex-shrink-0"
 						/>
 					</div>
 

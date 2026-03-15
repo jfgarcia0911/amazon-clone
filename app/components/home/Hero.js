@@ -54,7 +54,7 @@ export default function Hero() {
 		<div className="flex flex-col mt-26">
 			<ProductCarousel />
 			<FeaturedProductsGrid />
-
+      
 			{recentItems.length > 0 && (
 				<ProductOptions
 					images={recentItems}
