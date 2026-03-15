@@ -33,9 +33,10 @@ export default function ProductCarousel() {
 	return (
 		<div className=" flex items-center justify-center">
 			<div className="relative w-380 h-150 overflow-hidden">
-				<div
+				<div className="absolute top-0 left-0  w-full">
+          <div
 					style={{ transform: `translateX(-${current * 100}%)` }}
-					className="flex transition-transform duration-500"
+					className="flex transition-transform duration-500 "
 				>
 					{items.map((img, index) => (
 						<div
@@ -52,6 +53,7 @@ export default function ProductCarousel() {
 						</div>
 					))}
 				</div>
+        </div>
 
 				{/* Gradient Overlay at bottom */}
 				<div className="absolute bottom-0 left-0 w-full h-100 bg-gradient-to-t from-gray-100 via-transparent to-transparent"></div>
