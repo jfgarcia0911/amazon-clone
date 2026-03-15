@@ -31,7 +31,7 @@ export default function ProductCarousel() {
 	}, []);
 
 	return (
-		<div className=" flex items-center justify-center">
+		<div className=" flex items-center justify-center lg:-mt-26">
 			<div className="relative w-380 h-150 overflow-hidden">
 				<div className="absolute top-0 left-0  w-full">
           <div
