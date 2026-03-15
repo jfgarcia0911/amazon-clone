@@ -10,7 +10,6 @@ export default function Home() {
 			<Header />
 			<SecondaryNav />
 			<Hero />
-
 			<Footer  />
 		</div>
 	);
