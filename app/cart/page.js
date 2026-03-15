@@ -94,13 +94,48 @@ export default function CartPage() {
 		return () => unsubscribe(); // cleanup listener
 	}, [user]);
 
+	const handleSignin = () => {
+		router.push("/sign-in");
+	};
+	const handleSignup = () => {
+		router.push("/sign-up");
+	};
+
 	return (
 		<div className="overflow-hidden">
 			<Header />
 			{cartItems.length === 0 ? (
-				<p className="text-3xl font-bold mb-4 p-10 mt-20">
-					Your Amazon Cart is empty.
-				</p>
+				<div className="flex justify-center w-full items-center h-100 mt-10">
+					<Image
+						src="https://m.media-amazon.com/images/G/01/cart/empty/kettle-desaturated._CB445243794_.svg"
+						alt="Empty cart kettle"
+						width={400}
+						height={400}
+					/>
+					<div className="flex flex-col items-start justify-center h-50">
+						<p className="text-2xl font-bold ">
+							Your Amazon Cart is empty
+						</p>
+						<div>
+							{!user && (
+                <div className="flex w-full space-x-2">
+								<button
+									onClick={handleSignin}
+									className="text-black text-sm h-8 bg-yellow-300 rounded-2xl  px-4 p-1 mx-auto mt-4  cursor-pointer"
+								>
+									Sign in to your account
+								</button>
+                <button
+									onClick={handleSignup}
+									className="text-black text-sm h-8 border bg-white rounded-2xl  px-4 p-1 mx-auto mt-4  cursor-pointer"
+								>
+									Sign up now
+								</button>
+							</div>
+              )}
+						</div>
+					</div>
+				</div>
 			) : (
 				<div className="mt-20 justify-center items-center xl:items-start max-w-screen flex flex-col xl:flex-row">
 					<div className="space-y-4 px-10  ">
@@ -116,7 +151,7 @@ export default function CartPage() {
 								const [whole, decimal] = price.split(".");
 								return (
 									<div
-										className={`flex w-full p-5 space-x-5 ${isLoading === item.id && 'opacity-50'}`}
+										className={`flex w-full p-5 space-x-5 ${isLoading === item.id && "opacity-50"}`}
 										key={item.id}
 									>
 										{/* Image */}
@@ -139,9 +174,7 @@ export default function CartPage() {
 												href={`/products/${item.id}`}
 												className=" md:w-80 lg:w-120 xl:w-160  2xl:w-180 line-clamp-2"
 											>
-												<h2 className="font-medium text-lg">
-													{item.name}
-												</h2>
+												<h2 className="font-medium text-lg">{item.name}</h2>
 											</Link>
 											<div>
 												<p
@@ -151,17 +184,13 @@ export default function CartPage() {
 															: "text-red-700"
 													} text-xs`}
 												>
-													{item.stockQuantity
-														? "In Stock"
-														: "Out of Stock"}
+													{item.stockQuantity ? "In Stock" : "Out of Stock"}
 												</p>
 											</div>
 											<div>
 												<p className="text-xs text-gray-500 font-semibold">
 													FREE Shipping{" "}
-													<span className="font-normal">
-														to Philippines.
-													</span>
+													<span className="font-normal">to Philippines.</span>
 												</p>
 											</div>
 											{/* Add or Less a quantity */}
@@ -169,56 +198,41 @@ export default function CartPage() {
 												className={`flex space-x-4 border-3 font-bold border-yellow-300 rounded-xl w-27 items-center justify-center mt-3 h-8`}
 											>
 												<button
-										disabled={isLoading === item.id}
-
-													onClick={() =>
-														handleAddToCart(
-															item,
-															-1
-														)
-													}
+													disabled={isLoading === item.id}
+													onClick={() => handleAddToCart(item, -1)}
 													className={`cursor-pointer `}
 												>
 													{item.quantity > 1 ? (
-														<Minus 
-															size={16}
-															strokeWidth={3}
-														/>
+														<Minus size={16} strokeWidth={3} />
 													) : (
-														<Trash
-															size={16}
-															strokeWidth={3}
-														/>
+														<Trash size={16} strokeWidth={3} />
 													)}
 												</button>
-												<div className="w-4 flex justify-center"> {isLoading === item.id? (
+												<div className="w-4 flex justify-center">
+													{" "}
+													{isLoading === item.id ? (
 														<Loader2
 															className="animate-spin"
 															size={20}
 															strokeWidth={3}
 														/>
-													) : item.quantity }</div>
+													) : (
+														item.quantity
+													)}
+												</div>
 												<button
-										disabled={isLoading === item.id}
-
-													onClick={() =>
-														handleAddToCart(item, 1)
-													}
+													disabled={isLoading === item.id}
+													onClick={() => handleAddToCart(item, 1)}
 													className="cursor-pointer"
 												>
-													<Plus
-														size={16}
-														strokeWidth={3}
-													/>
+													<Plus size={16} strokeWidth={3} />
 												</button>
 											</div>
 										</div>
 
 										{/* Price */}
 										<div className="ml-auto relative px-5 font-bold">
-											<span className="absolute top-0.75 text-xs">
-												$
-											</span>
+											<span className="absolute top-0.75 text-xs">$</span>
 											<span className="text-xl ml-2">
 												{whole * item.quantity}
 											</span>
@@ -234,17 +248,15 @@ export default function CartPage() {
 					<div className="my-10 xl:mt-18 w-60 space-y-4">
 						<div className="w-60">
 							Subtotal ({cartItems.length} items):
-							<span className="font-bold ml-1">
-								${calculatedSubtotal}
-							</span>
+							<span className="font-bold ml-1">${calculatedSubtotal}</span>
 						</div>
 						<div>
-							<button
-								onClick={handleSuccess}
-								className="bg-yellow-300 w-full py-1 rounded-2xl text-sm"
+							<Link
+								href={`/checkout/shipping`}
+								className="bg-yellow-300 w-full py-1 px-2 rounded-2xl text-sm cursor-pointer"
 							>
 								Proceed to checkout
-							</button>{" "}
+							</Link>{" "}
 						</div>
 					</div>
 				</div>
