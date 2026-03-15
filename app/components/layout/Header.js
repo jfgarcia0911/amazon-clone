@@ -177,7 +177,7 @@ export default function Header() {
 
 					{/* Language */}
 					<div className="flex relative group  items-center  ">
-						<div className="flex space-x-1 border border-transparent  group-hover:border-white cursor-pointer py-3 px-1">
+						<div className="flex space-x-1 border border-transparent  group-hover:border-white cursor-pointer py-3 px-1 w-14">
 							<Image
 								src="/us-flag.png"
 								alt="Logo"
@@ -189,7 +189,7 @@ export default function Header() {
 							<div>{languageCode}</div>
 						</div>
 						{/* Arrow Down */}
-						<div className="relative w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-white cursor-pointer">
+						<div className="relative border-l-4 border-t-4 border-r-4 border-l-transparent border-r-transparent cursor-pointer">
 							{/* <!-- Triangle at the top --> */}
 							<div className="absolute bg-white h-4 w-4 rotate-45 top-4 -left-2  hidden   group-hover:block "></div>
 						</div>
