@@ -116,7 +116,7 @@ export default function SearchBar() {
 		};
 	}, []);
 	return (
-		<div className="relative flex flex-1 text-black   h-10">
+		<div className="relative flex w-full lg:flex-1 text-black my-1  h-10">
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -148,7 +148,7 @@ export default function SearchBar() {
 				ref={buttonRef}
 				type="button"
 				aria-label={`Search in ${category} category`}
-				className="absolute h-10 px-2 space-x-1  text-gray-500 flex items-center justify-center  border-r border-gray-400 z-10 rounded-sm focus:ring-2 focus:ring-yellow-500 hover:text-black cursor-pointer"
+				className="absolute h-10 px-2 space-x-1  text-gray-500 flex items-center justify-center  border-r border-gray-400 z-10 rounded-sm focus:ring-2 focus:ring-yellow-500 hover:text-black cursor-pointer "
 			>
 				<div className="text-sm ">{category}</div>
 				{/* Arrow down */}
