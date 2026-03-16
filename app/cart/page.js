@@ -18,11 +18,15 @@ import { useAuth } from "../context/AuthContext ";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 export default function CartPage() {
 	const [cartItems, setCartItems] = useState([]);
 	const { user } = useAuth();
 	const [calculatedSubtotal, setCalculatedSubtotal] = useState(0);
 	const [isLoading, setIsLoading] = useState(null);
+    const router = useRouter();
+  
 	const handleAddToCart = async (item, num) => {
 		setIsLoading(item.id);
 		// Check user authentication
@@ -113,26 +117,24 @@ export default function CartPage() {
 						height={400}
 					/>
 					<div className="flex flex-col items-start justify-center h-50">
-						<p className="text-2xl font-bold ">
-							Your Amazon Cart is empty
-						</p>
+						<p className="text-2xl font-bold ">Your Amazon Cart is empty</p>
 						<div>
 							{!user && (
-                <div className="flex w-full space-x-2">
-								<button
-									onClick={handleSignin}
-									className="text-black text-sm h-8 bg-yellow-300 rounded-2xl  px-4 p-1 mx-auto mt-4  cursor-pointer"
-								>
-									Sign in to your account
-								</button>
-                <button
-									onClick={handleSignup}
-									className="text-black text-sm h-8 border bg-white rounded-2xl  px-4 p-1 mx-auto mt-4  cursor-pointer"
-								>
-									Sign up now
-								</button>
-							</div>
-              )}
+								<div className="flex w-full space-x-2">
+									<button
+										onClick={handleSignin}
+										className="text-black text-sm h-8 bg-yellow-300 rounded-2xl  px-4 p-1 mx-auto mt-4  cursor-pointer"
+									>
+										Sign in to your account
+									</button>
+									<button
+										onClick={handleSignup}
+										className="text-black text-sm h-8 border bg-white rounded-2xl  px-4 p-1 mx-auto mt-4  cursor-pointer"
+									>
+										Sign up now
+									</button>
+								</div>
+							)}
 						</div>
 					</div>
 				</div>

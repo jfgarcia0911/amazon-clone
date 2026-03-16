@@ -1,9 +1,11 @@
 import React from "react";
 import { ShoppingCart } from "lucide-react";
 import useCartQuantity from "../../hooks/useCartQuantity";
+import { useRouter } from "next/navigation";
 
 export default function CartIcon({user}) {
   const cartQuantity = useCartQuantity(user)
+    const router = useRouter();
 
 
   	const handleCartQuantity = () => {
