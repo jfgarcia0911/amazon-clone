@@ -13,7 +13,7 @@ export default function CartIcon({user}) {
 	return (
 		<div
 			onClick={handleCartQuantity}
-			className="flex relative  items-center w-20 border border-transparent  hover:border-white px-1 py-2 cursor-pointer"
+			className="flex relative  items-center  border border-transparent  hover:border-white  py-2 cursor-pointer"
 		>
 			<div className="text-xs  flex items-baseline space-x-1">
 				<ShoppingCart size={30} />
