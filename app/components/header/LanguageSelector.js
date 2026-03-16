@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function LanguageSelector() {
 	const [languageCode, setLanguageCode] = useState("EN");
-	const [flag, setFlag] = useState("./us-flag.png");
+	const [flag, setFlag] = useState("/us-flag.png");
 	const languages = [
 		{ language: "English", code: "EN", flag: "/us-flag.png" },
 		{ language: "español", code: "ES", flag: "/es-flag.png" },
@@ -21,16 +21,17 @@ export default function LanguageSelector() {
 		setFlag(flag);
 	};
 	return (
-		<div className="flex relative group  items-center  ">
-			<div className="flex space-x-1 border border-transparent  group-hover:border-white cursor-pointer py-3 px-1 w-14">
-				<Image
-					src={flag}
-					alt="Logo"
-					width={20}
-					height={20}
-					priority
-					className="object-contain "
-				/>
+		<div className="hidden lg:flex relative group  items-center  ">
+			<div className="flex space-x-1 border border-transparent  group-hover:border-white cursor-pointer py-3 px-1 w-14 items-center justify-center">
+					<Image
+						src={flag}
+						alt="Logo"
+						width={20}
+						height={20}
+						priority
+						className="object-contain h-5 w-5"
+					/>
+
 				<div>{languageCode}</div>
 			</div>
 			{/* Arrow Down */}
