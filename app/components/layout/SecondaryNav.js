@@ -7,8 +7,8 @@ export default function SecondaryNav() {
 
 	return (
 		<div className={`bg-gray-700 text-white font-sans mt-15 w-full z-45 hidden lg:block  `}>
-			<div className="flex justify-between items-center px-5 h-[40px]  text-nowrap">
-				<div className="flex space-x-2 items-center justify-center  font-semibold text-sm ">
+			<div className="flex justify-between items-center px-5 h-[40px]  xl:text-nowrap">
+				<div className="flex space-x-4 items-center justify-center  font-semibold text-sm ">
 					<div className="flex items-center space-x-1  py-2 px-2 border border-transparent  hover:border-white cursor-pointer">
 						<Menu size={24} />
 						<div>All</div>
@@ -22,31 +22,31 @@ export default function SecondaryNav() {
 						/>
 						<h1 className="text-black ">Rufus</h1>
 					</div>
-					<div className="flex items-center   py-2 px-2 border border-transparent  hover:border-white cursor-pointer ">
+					<div className="flex items-center  border border-transparent  hover:border-white cursor-pointer ">
 						Free Shipping Zone
 					</div>
-					<div className="flex items-center   py-2 px-2 border border-transparent  hover:border-white cursor-pointer ">{`Today's Deals`}</div>
-					<div className="flex items-center   py-2 px-2 border border-transparent  hover:border-white cursor-pointer ">
+					<div className="flex items-center    border border-transparent  hover:border-white cursor-pointer ">{`Today's Deals`}</div>
+					<div className="flex items-center    border border-transparent  hover:border-white cursor-pointer ">
 						Prime Video
 					</div>
-					<div className="flex items-center  py-2 px-2 border border-transparent  hover:border-white cursor-pointer ">
+					<div className="flex items-center   border border-transparent  hover:border-white cursor-pointer ">
 						Buy Again
 					</div>
-					<div className="flex items-center   py-2 px-2 border border-transparent  hover:border-white cursor-pointer ">
+					<div className="flex items-center    border border-transparent  hover:border-white cursor-pointer ">
 						Customer Service
 					</div>
-					<div className="flex items-center   py-2 px-2 border border-transparent  hover:border-white cursor-pointer ">
+					<div className="flex items-center    border border-transparent  hover:border-white cursor-pointer ">
 						Registry
 					</div>
-					<div className="flex items-center   py-2 px-2 border border-transparent  hover:border-white cursor-pointer ">
+					<div className="flex items-center    border border-transparent  hover:border-white cursor-pointer ">
 						Gift Cards
 					</div>
-					<div className="flex items-center   py-2 px-2 border border-transparent  hover:border-white cursor-pointer ">
+					<div className="flex items-center    border border-transparent  hover:border-white cursor-pointer ">
 						Sell
 					</div>
 				</div>
 
-				<div className="flex items-center w-[250px]  py-2 px-2 border border-transparent  hover:border-white cursor-pointer  font-semibold text-sm">
+				<div className="flex items-center   border border-transparent  hover:border-white cursor-pointer  font-semibold text-sm">
 					Get free shipping to Philippines
 				</div>
 			</div>
