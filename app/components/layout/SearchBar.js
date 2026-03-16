@@ -2,15 +2,21 @@ import React, { useRef, useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { db } from "../../firebase/config.js";
-import { useRouter } from "next/navigation.js";
+import { useRouter, useSearchParams  } from "next/navigation.js";
 export default function SearchBar() {
-	const inputRef = useRef();
+	const searchParams = useSearchParams();
+  const initialCategory = searchParams.get("category") || "All";
+  const initialInput = searchParams.get("input") || "";
+  const inputRef = useRef();
 	const [categoryWidth, setCategoryWidth] = useState(60);
 	const buttonRef = useRef();
 	const router = useRouter();
-	const [category, setCategory] = useState("All");
+	const [category, setCategory] = useState(initialCategory);
 	const [open, setOpen] = useState(false);
 	const dropdownRef = useRef();
+   
+
+
 	const categories = [
 		"All Departments",
 		"Arts & Crafts",
@@ -90,13 +96,28 @@ export default function SearchBar() {
 		}
 	};
 
+   useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.value = initialInput;
+    }
+  }, [initialInput]);
+
+
 	// This effect runs whenever the 'category' value changes
 	useEffect(() => {
-		if (buttonRef.current) {
-			const width = buttonRef.current.offsetWidth;
-			setCategoryWidth(width);
-		}
-	}, [category]);
+  if (!buttonRef.current) return;
+
+  const observer = new ResizeObserver(entries => {
+    for (let entry of entries) {
+      setCategoryWidth(entry.contentRect.width);
+    }
+  });
+
+  observer.observe(buttonRef.current);
+
+  return () => observer.disconnect();
+}, []);
+
 
 	useEffect(() => {
 		function handleClickOutside(event) {
@@ -130,7 +151,7 @@ export default function SearchBar() {
 					placeholder="Search Amazon"
 					className=" outline-none   text-black  py-2 flex flex-1"
 					style={{
-						paddingLeft: `${categoryWidth + 8}px`,
+						paddingLeft: `${categoryWidth + 25}px`,
 					}}
 				/>
 				<button
