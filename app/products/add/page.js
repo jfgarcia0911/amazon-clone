@@ -1,8 +1,9 @@
 "use client";
 
+import { Suspense } from "react"; // 👈 import Suspense
 import Header from "../../components/layout/Header";
 import React from "react";
-import { Loader2  } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useProductForm } from "../../hooks/useProductForm";
 import ProductNameField from "../../components/ProductForm/ProductNameField";
 import ProductDescriptionField from "../../components/ProductForm/ProductDescriptionField";
@@ -14,7 +15,6 @@ import StockField from "../../components/ProductForm/StockField";
 import MainImageUpload from "../../components/ProductForm/MainImageUpload";
 import AdditionalImagesList from "../../components/ProductForm/AdditionalImagesList";
 export default function AddProduct() {
-
 	const {
 		formData,
 		status,
@@ -35,7 +35,9 @@ export default function AddProduct() {
 
 	return (
 		<div>
-			<Header />
+			<Suspense fallback={<div className="h-16 bg-gray-900" />}>
+				<Header />
+			</Suspense>
 
 			<div className="w-full mt-20 flex justify-center items-center ">
 				<div className="w-300 ">

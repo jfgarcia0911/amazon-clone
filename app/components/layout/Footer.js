@@ -3,6 +3,7 @@
 import Image from "next/image";
 import React from "react";
 import { Globe, DollarSign } from "lucide-react";
+import Logo from "../header/Logo";
 
 export default function Footer() {
 	const scrollTop = () => {
@@ -95,16 +96,8 @@ export default function Footer() {
 			</div>
 			{/* Third layer */}
 			<div className="flex  items-center justify-center space-x-30  py-10 bg-gray-800 border-t border-gray-500 text-gray-300">
-				<div className="hidden md:block">
-					<Image
-						src="/amazon.png"
-						alt="Logo"
-						width={100}
-						height={10}
-						priority
-						className="object-contain mr-0"
-					/>
-				</div>
+				
+        <Logo/>
 				<div className="flex space-x-2">
 					<div className="flex items-center space-x-2 p-2 w-35 rounded-md border border-gray-500">
 						<Globe size={17} />
@@ -121,7 +114,7 @@ export default function Footer() {
 							width={20}
 							height={20}
 							priority
-							className="object-contain"
+							className="object-contain w-5 h-5"
 						/>
 						<div>United States</div>
 					</div>
