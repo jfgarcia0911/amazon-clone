@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import SearchBar from "./SearchBar";
-import { useAuth } from "../../context/AuthContext ";
+import { useAuth } from "../../context/AuthContext";
 import {
 	Menu,
 	X,

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Trash } from "lucide-react";
 import Header from "../components/layout/Header";
-import { useAuth } from "../context/AuthContext ";
+import { useAuth } from "../context/AuthContext";
 import Link from "next/link";
 import {  Pencil } from "lucide-react";
 import { useProductForm } from "../hooks/useProductForm";

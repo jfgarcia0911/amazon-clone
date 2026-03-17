@@ -5,7 +5,7 @@ import FeaturedProductsGrid from "./FeaturedProductsGrid";
 import ProductOptions from "./ProductOptions";
 import { collection, getDocs, query, where, orderBy } from "firebase/firestore";
 import { db } from "../../firebase/config.js";
-import { useAuth } from "../../context/AuthContext ";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Hero() {
 	const [recentItems, setRecentItems] = useState([]);

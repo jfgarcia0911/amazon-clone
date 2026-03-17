@@ -14,7 +14,7 @@ import { db } from "../firebase/config";
 import Image from "next/image";
 import { Trash, Plus, Minus } from "lucide-react";
 import Header from "../components/layout/Header";
-import { useAuth } from "../context/AuthContext ";
+import { useAuth } from "../context/AuthContext";
 import Link from "next/link";
 import { toast } from "react-toastify";``
 import { Loader2 } from "lucide-react";

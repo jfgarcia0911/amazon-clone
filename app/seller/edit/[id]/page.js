@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../../firebase/config";
-import { useAuth } from "../../../context/AuthContext ";
+import { useAuth } from "../../../context/AuthContext";
 import { toast } from "react-toastify";
 import Header from "../../../components/layout/Header";
 import { Loader2 } from "lucide-react";

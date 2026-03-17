@@ -95,9 +95,11 @@ export default function Footer() {
 				</div>
 			</div>
 			{/* Third layer */}
-			<div className="flex  items-center justify-center space-x-30  py-10 bg-gray-800 border-t border-gray-500 text-gray-300">
+			<div className="flex  items-center justify-center  md:space-x-30 flex-wrap py-5 bg-gray-800 border-t border-gray-500 text-gray-300">
 				
-        <Logo/>
+        <div className="my-5 ">
+          <Logo/>
+        </div>
 				<div className="flex space-x-2">
 					<div className="flex items-center space-x-2 p-2 w-35 rounded-md border border-gray-500">
 						<Globe size={17} />
