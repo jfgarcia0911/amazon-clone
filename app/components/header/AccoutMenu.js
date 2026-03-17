@@ -4,7 +4,11 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase/config";
+
 export default function AccoutMenu({ user }) {
+  console.log(user)
 	const router = useRouter();
 
 	const handleSignin = () => {

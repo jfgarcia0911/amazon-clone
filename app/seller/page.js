@@ -1,14 +1,13 @@
 "use client";
+
+import { Suspense } from "react"; // 👈 import Suspense
 import { useEffect, useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../firebase/config";
 import Image from "next/image";
-import { Trash, Plus, Minus } from "lucide-react";
+import { Trash } from "lucide-react";
 import Header from "../components/layout/Header";
 import { useAuth } from "../context/AuthContext ";
 import Link from "next/link";
-import { toast } from "react-toastify";
-import { Loader2, Pencil } from "lucide-react";
+import {  Pencil } from "lucide-react";
 import { useProductForm } from "../hooks/useProductForm";
 
 export default function SellerPage() {
@@ -25,7 +24,9 @@ export default function SellerPage() {
 
 	return (
 		<div className="overflow-hidden">
-			<Header />
+			<Suspense fallback={<div className="h-16 bg-gray-900" />}>
+        <Header />
+      </Suspense>
 			{products.length === 0 ? (
 				<p className="text-3xl font-bold mb-4 p-10 mt-20">
 					No available product yet.
