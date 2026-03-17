@@ -1,5 +1,5 @@
 import React from "react";
-import { MapPin, ShoppingCart } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 export default function DeliverTo() {
 	return (

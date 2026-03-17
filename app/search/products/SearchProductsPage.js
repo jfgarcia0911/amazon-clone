@@ -16,7 +16,6 @@ import Link from "next/link";
 import { toast } from "react-toastify";
 export default function SearchProductsPage() {
 	const user = auth.currentUser;
-
 	const searchParams = useSearchParams();
 	const [products, setProducts] = useState([]);
 	const category = searchParams.get("category");

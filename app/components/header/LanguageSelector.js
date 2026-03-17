@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+"use client";
 
+import React, { useState } from "react";
 import Image from "next/image";
 
 export default function LanguageSelector() {
@@ -26,7 +27,7 @@ export default function LanguageSelector() {
 				<div className="relative w-5 h-5">
 					<Image
 						src={flag}
-						alt="Logo"
+						alt={`${languageCode} flag`}
 						fill
 						priority
 						className="object-contain "

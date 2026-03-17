@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef, useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { collection, getDocs, query, where, orderBy } from "firebase/firestore";

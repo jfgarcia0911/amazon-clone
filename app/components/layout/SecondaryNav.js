@@ -4,9 +4,10 @@ import { Menu } from "lucide-react";
 import Image from "next/image";
 
 export default function SecondaryNav() {
-
 	return (
-		<div className={`bg-gray-700 text-white font-sans mt-15 w-full z-45 hidden lg:block  `}>
+		<div
+			className={`bg-gray-700 text-white font-sans mt-15 w-full z-45 hidden lg:block  `}
+		>
 			<div className="flex justify-between items-center px-5 h-[40px]  xl:text-nowrap">
 				<div className="flex space-x-4 items-center justify-center  font-semibold text-sm ">
 					<div className="flex items-center space-x-1  py-2 px-2 border border-transparent  hover:border-white cursor-pointer">
@@ -14,12 +15,14 @@ export default function SecondaryNav() {
 						<div>All</div>
 					</div>
 					<div className="flex items-center space-x-1 w-[80px]  p-1 px-2 rounded-2xl bg-white cursor-pointer">
-						<Image
-							src={"/rufus-ai-icon.png"}
-							alt="rufus ai icon"
-							width={15}
-							height={15}
-						/>
+						<div className="h-4 w-4 relative">
+							<Image
+								src={"/rufus-ai-icon.png"}
+								alt="rufus ai icon"
+								fill
+								className="object-contain"
+							/>
+						</div>
 						<h1 className="text-black ">Rufus</h1>
 					</div>
 					<div className="flex items-center  border border-transparent  hover:border-white cursor-pointer ">
