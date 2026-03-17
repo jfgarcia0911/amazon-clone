@@ -48,6 +48,7 @@ export default function ProductCarousel() {
 								fill
 								alt="story image"
 								sizes="(max-width: 768px) 100vw, 33vw"
+                priority
 								className="object-cover"
 							/>
 						</div>

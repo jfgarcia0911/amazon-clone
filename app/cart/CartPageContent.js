@@ -108,7 +108,7 @@ export default function CartPage() {
   return (
     <div className="overflow-hidden">
       <Header />
-      {cartItems.length > 0 ? (
+      {cartItems.length === 0 ? (
         <div className="flex justify-center w-full items-center h-100 mt-10">
           <Image
             src="https://m.media-amazon.com/images/G/01/cart/empty/kettle-desaturated._CB445243794_.svg"
