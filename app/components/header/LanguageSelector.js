@@ -23,15 +23,15 @@ export default function LanguageSelector() {
 	return (
 		<div className="hidden lg:flex relative group  items-center  ">
 			<div className="flex space-x-1 border border-transparent  group-hover:border-white cursor-pointer py-3 px-1 w-14 items-center justify-center">
+				<div className="relative w-5 h-5">
 					<Image
 						src={flag}
 						alt="Logo"
-						width={20}
-						height={20}
+						fill
 						priority
-						className="object-contain h-5 w-5"
+						className="object-contain "
 					/>
-
+				</div>
 				<div>{languageCode}</div>
 			</div>
 			{/* Arrow Down */}

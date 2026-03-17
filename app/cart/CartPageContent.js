@@ -16,7 +16,7 @@ import { Trash, Plus, Minus } from "lucide-react";
 import Header from "../components/layout/Header";
 import { useAuth } from "../context/AuthContext ";
 import Link from "next/link";
-import { toast } from "react-toastify";
+import { toast } from "react-toastify";``
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -108,13 +108,15 @@ export default function CartPage() {
   return (
     <div className="overflow-hidden">
       <Header />
-      {cartItems.length === 0 ? (
+      {cartItems.length > 0 ? (
         <div className="flex justify-center w-full items-center h-100 mt-10">
           <Image
             src="https://m.media-amazon.com/images/G/01/cart/empty/kettle-desaturated._CB445243794_.svg"
             alt="Empty cart kettle"
             width={400}
             height={400}
+            priority
+             className="w-100 h-100"
           />
           <div className="flex flex-col items-start justify-center h-50">
             <p className="text-2xl font-bold ">Your Amazon Cart is empty</p>
