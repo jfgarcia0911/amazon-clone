@@ -31,30 +31,30 @@ export default function ProductCarousel() {
 	}, []);
 
 	return (
-		<div className=" flex items-center justify-center lg:-mt-26">
-			<div className="relative w-380 h-150 overflow-hidden">
-				<div className="absolute top-0 left-0  w-full">
-          <div
-					style={{ transform: `translateX(-${current * 100}%)` }}
-					className="flex transition-transform duration-500 "
-				>
-					{items.map((img, index) => (
-						<div
-							key={index}
-							className="relative w-full h-[600px] flex-shrink-0"
-						>
-							<Image
-								src={img}
-								fill
-								alt="story image"
-								sizes="(max-width: 768px) 100vw, 33vw"
-                priority
-								className="object-cover"
-							/>
-						</div>
-					))}
+		<div className="flex items-center justify-center lg:-mt-26 px-4">
+			<div className="relative w-full max-w-7xl aspect-video overflow-hidden rounded-lg">
+				<div className="absolute inset-0 w-full h-full">
+					<div
+						style={{ transform: `translateX(-${current * 100}%)` }}
+						className="flex transition-transform duration-500 h-full"
+					>
+						{items.map((img, index) => (
+							<div
+								key={index}
+								className="relative w-full h-full flex-shrink-0"
+							>
+								<Image
+									src={img}
+									fill
+									alt="story image"
+									sizes="(max-width: 768px) 100vw, 33vw"
+									priority
+									className="object-cover"
+								/>
+							</div>
+						))}
+					</div>
 				</div>
-        </div>
 
 				{/* Gradient Overlay at bottom */}
 				<div className="absolute bottom-0 left-0 w-full h-100 bg-gradient-to-t from-gray-100 via-transparent to-transparent"></div>
@@ -62,14 +62,14 @@ export default function ProductCarousel() {
 				{/* Left Arrow */}
 				<ChevronLeft
 					onClick={prevSlide}
-					className="absolute top-20 left-0  cursor-pointer"
+					className="absolute top-10 md:top-20 lg:top-30 left-0  cursor-pointer"
 					strokeWidth={0.6}
 					size={70}
 				/>
 				{/* Right Arrow */}
 				<ChevronRight
 					onClick={nextSlide}
-					className="absolute top-20 right-0  cursor-pointer"
+					className="absolute top-10 md:top-20 lg:top-30 right-0  cursor-pointer"
 					strokeWidth={0.6}
 					size={70}
 				/>
