@@ -80,10 +80,11 @@ export default function SearchProductsPage() {
 	const handleAddToCart = async (e, product) => {
 		e.preventDefault(); // prevent link navigation
 		e.stopPropagation(); // stop bubbling up to <Link>
-		toast.success("Add to cart successful!");
+		
 		// Check user authentication
 		if (!user) {
-			alert("You must be signed in to add items to cart.");
+			// alert("You must be signed in to add items to cart.");
+      toast.info("Please sign in to add items to your cart.");
 			return;
 		}
 
@@ -109,6 +110,7 @@ export default function SearchProductsPage() {
 					quantity: currentQty + 1,
 					subTotal: subTotal + price,
 				});
+        toast.success("Add to cart successful!");
 			} else {
 				// ➕ not in cart → add new item
 				await setDoc(cartItemRef, {
@@ -121,6 +123,7 @@ export default function SearchProductsPage() {
 					createdAt: new Date(),
 					quantity: 1,
 				});
+        toast.success("Add to cart successful!");
 			}
 			// router.push("/cart");
 			console.log("Added to cart:", product.name);
