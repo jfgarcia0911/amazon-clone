@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import Header from "../../components/layout/Header";
 import { auth } from "../../firebase/config";
 import { useRouter } from "next/navigation.js";
-
+import { toast } from "react-toastify";
 export default function ProductsById() {
 	const params = useParams();
 	const [productData, setProductData] = useState(null);
@@ -21,7 +21,8 @@ export default function ProductsById() {
 	const handleAddToCart = async (product) => {
 		// Check user authentication
 		if (!user) {
-			alert("You must be signed in to add items to cart.");
+      toast.info("Please sign in to add items to your cart.");
+			// alert("You must be signed in to add items to cart.");
 			return;
 		}
 		const userId = user.uid;
@@ -51,10 +52,11 @@ export default function ProductsById() {
 					quantity: 1,
 				});
 			}
-
-			console.log("Added to cart:", product.name);
+      toast.success("Add to cart successful!");
+			// console.log("Added to cart:", product.name);
 		} catch (err) {
-			console.error("Error adding to cart:", err);
+      toast.error("Failed to add to cart.");
+			// console.error("Error adding to cart:", err);
 		}
 		router.push("/cart");
 	};

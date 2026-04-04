@@ -75,8 +75,8 @@ const productGallery = [
 
 	// router.push(`/search/products?category=${encodeURIComponent(selectedCategory)}&input=${inputRef.current.value}
 	return (
-		<div className="relative w-full -mt-30 md:-mt-60 lg:-mt-80 xl:-mt-90 mb-20 min-h-[600px] font-sans ">
-			<div className=" w-full ">
+		<div className="relative w-full -mt-105 mb-20 min-h-[600px] font-sans ">
+			<div className=" w-full  ">
 				<div className="max-w-380 mx-auto ">
 					<div className="grid  md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 px-5   ">
 						{productGallery.map((prod, index) => {

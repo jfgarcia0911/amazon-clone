@@ -8,7 +8,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/config";
 
 export default function AccoutMenu({ user }) {
-  console.log(user)
+  // console.log(user)
 	const router = useRouter();
 
 	const handleSignin = () => {
@@ -157,10 +157,10 @@ export default function AccoutMenu({ user }) {
 					<h1>{user.displayName}</h1>
 				) : (
 					<>
-						<h1>
+						<h1 onClick={handleSignin}>
 							Sign in <span className="text-sm">{`>`}</span>
 						</h1>
-						<div className="w-8 ">
+						<div onClick={handleSignin} className="w-8 ">
 							<Image
 								src="/user.png"
 								width={40}

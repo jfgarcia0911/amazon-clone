@@ -139,7 +139,7 @@ export default function Header() {
 											onClick={handleSignin}
 											className="flex items-center cursor-pointer"
 										>
-											<h1 className="ml-auto mr-1">Sign in</h1>
+											<h1 className="ml-auto mr-1">Sign in </h1>
 											<UserRound size={25} className=" " />
 										</div>
 									)}
