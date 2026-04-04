@@ -60,7 +60,7 @@ export default function SignInPage() {
 				//Sign in with email and password
 				const res = await signInWithEmailAndPassword(
 					formData.email,
-					formData.password
+					formData.password,
 				);
 				console.log("User signed in:", res.user);
 
@@ -103,8 +103,8 @@ export default function SignInPage() {
 		} catch (error) {
 			setErrors({
 				...errors,
-				password:
-					"Google sign-in error:", error
+				password: "Google sign-in error:",
+				error,
 			});
 		}
 	};
@@ -123,23 +123,26 @@ export default function SignInPage() {
 	return (
 		<div className="p-10 flex justify-center w-full  ">
 			<div>
-				<div className="relative w-40 mx-auto">
-					<Image
-					alt="amazon logo"
-					src={`/amazon.png`}
-					width={50}
-					height={50}
-					priority
-					className="mx-auto mb-5 w-auto h-auto"
-				/>
+				<div
+					onClick={() => router.push("/")}
+					className="relative flex items-center justify-center border border-transparent hover:border-white py-3 px-1  cursor-pointer mb-5"
+				>
+					<h1 className="text-5xl font-bold -mt-4">amazon</h1>
+					<div className="absolute top-8 left-25">
+						<Image
+							src="/amazon.png"
+							alt="Logo"
+							width={100}
+							height={10}
+							priority
+							className="object-contain flex-shrink-0 w-25 h-8"
+						/>
+					</div>
 				</div>
 				<div className="border border-gray-300 rounded-xl w-90  p-5">
 					<h1 className="text-3xl text-center mb-3">Sign in</h1>
 					<form onSubmit={handleSubmit}>
-						<label
-							htmlFor="email"
-							className="block text-sm font-bold mb-1"
-						>
+						<label htmlFor="email" className="block text-sm font-bold mb-1">
 							Email address
 						</label>
 						<div className="relative">
@@ -159,14 +162,9 @@ export default function SignInPage() {
 									: "focus:ring-1 focus:ring-blue-400  mb-2"
 							}`}
 						/>
-						<p className="text-red-500 mb-2 mt-1 text-sm">
-							{errors.email}
-						</p>
+						<p className="text-red-500 mb-2 mt-1 text-sm">{errors.email}</p>
 
-						<label
-							htmlFor="password"
-							className="block text-sm font-bold mb-1"
-						>
+						<label htmlFor="password" className="block text-sm font-bold mb-1">
 							Password
 						</label>
 						<div className="relative">
@@ -186,9 +184,7 @@ export default function SignInPage() {
 									: "focus:ring-1 focus:ring-blue-400  mb-2"
 							}`}
 						/>
-						<p className="text-red-500 mb-2 mt-1 text-sm">
-							{errors.password}
-						</p>
+						<p className="text-red-500 mb-2 mt-1 text-sm">{errors.password}</p>
 
 						<button
 							type="submit"
@@ -208,7 +204,10 @@ export default function SignInPage() {
 							</span>
 						</div>
 					</div>
-					<div onClick={handleGoogleSignIn} className="mt-6 flex items-center justify-center space-x-1 border p-2 border-gray-300 rounded-lg text-sm cursor-pointer">
+					<div
+						onClick={handleGoogleSignIn}
+						className="mt-6 flex items-center justify-center space-x-1 border p-2 border-gray-300 rounded-lg text-sm cursor-pointer"
+					>
 						<Image
 							alt="google icon"
 							src={`/google.png`}
@@ -222,9 +221,7 @@ export default function SignInPage() {
 						className="mt-6 text-center text-gray-500 text-sm "
 					>
 						<span>{`Don't have an account? `}</span>
-						<span className="text-blue-500 cursor-pointer">
-							Sign up
-						</span>
+						<span className="text-blue-500 cursor-pointer">Sign up</span>
 					</div>
 				</div>
 			</div>

@@ -74,7 +74,7 @@ export default function SignUpPage() {
 				//Create user with email and password for sign in
 				const res = await createUserWithEmailAndPassword(
 					formData.email,
-					formData.password
+					formData.password,
 				);
 				console.log(res);
 
@@ -89,13 +89,8 @@ export default function SignUpPage() {
 						provider: "email",
 						createdAt: new Date(),
 					});
-					console.log(
-						"User created and saved to Firestore:",
-						res.user
-					);
-					alert(
-						"Account created successfully! Your data has been saved."
-					);
+					console.log("User created and saved to Firestore:", res.user);
+					alert("Account created successfully! Your data has been saved.");
 					router.push("/sign-in");
 				}
 			} catch (error) {
@@ -115,26 +110,27 @@ export default function SignUpPage() {
 	return (
 		<div className="p-10 flex justify-center w-full  ">
 			<div>
-				<div className="relative w-40 mx-auto">
-					<Image
-						alt="amazon logo"
-						src={`/amazon.png`}
-						width={50}
-						height={50}
-						priority
-						className="mx-auto mb-5 w-auto h-auto"
-					/>
+				<div
+					onClick={() => router.push("/")}
+					className="relative flex items-center justify-center border border-transparent hover:border-white py-3 px-1  cursor-pointer mb-5"
+				>
+					<h1 className="text-5xl font-bold -mt-4">amazon</h1>
+					<div className="absolute top-8 left-25">
+						<Image
+							src="/amazon.png"
+							alt="Logo"
+							width={100}
+							height={10}
+							priority
+							className="object-contain flex-shrink-0 w-25 h-8"
+						/>
+					</div>
 				</div>
 
 				<div className="border border-gray-300 rounded-xl w-90  p-5">
-					<h1 className="text-3xl text-center mb-3">
-						Create Account
-					</h1>
+					<h1 className="text-3xl text-center mb-3">Create Account</h1>
 					<form onSubmit={handleSubmit}>
-						<label
-							htmlFor="name"
-							className="block text-sm font-bold mb-1"
-						>
+						<label htmlFor="name" className="block text-sm font-bold mb-1">
 							Your Name
 						</label>
 						<input
@@ -149,14 +145,9 @@ export default function SignUpPage() {
 									: "focus:ring-1 focus:ring-blue-400  mb-2"
 							}`}
 						/>
-						<p className="text-red-500 mb-2 mt-1 text-sm">
-							{errors.name}
-						</p>
+						<p className="text-red-500 mb-2 mt-1 text-sm">{errors.name}</p>
 
-						<label
-							htmlFor="email"
-							className="block  text-sm font-bold mb-1"
-						>
+						<label htmlFor="email" className="block  text-sm font-bold mb-1">
 							Email
 						</label>
 						<input
@@ -171,14 +162,9 @@ export default function SignUpPage() {
 									: "focus:ring-1 focus:ring-blue-400  mb-2"
 							}`}
 						/>
-						<p className="text-red-500 mb-2 mt-1 text-sm">
-							{errors.email}
-						</p>
+						<p className="text-red-500 mb-2 mt-1 text-sm">{errors.email}</p>
 
-						<label
-							htmlFor="password"
-							className="block  text-sm font-bold mb-1"
-						>
+						<label htmlFor="password" className="block  text-sm font-bold mb-1">
 							Password
 						</label>
 						<input
@@ -193,9 +179,7 @@ export default function SignUpPage() {
 									: "focus:ring-1 focus:ring-blue-400  mb-2"
 							}`}
 						/>
-						<p className="text-red-500 mb-2 mt-1 text-sm">
-							{errors.password}
-						</p>
+						<p className="text-red-500 mb-2 mt-1 text-sm">{errors.password}</p>
 
 						<label
 							htmlFor="confirmPassword"
@@ -224,9 +208,7 @@ export default function SignUpPage() {
 							disabled={isSubmitting}
 							className="bg-yellow-300 p-2 w-full rounded-4xl mt-2 text-sm cursor-pointer"
 						>
-							{isSubmitting
-								? "Creating account..."
-								: "Create Amazon account"}
+							{isSubmitting ? "Creating account..." : "Create Amazon account"}
 						</button>
 					</form>
 					<div className="relative mt-6 ">
@@ -253,9 +235,7 @@ export default function SignUpPage() {
 						className="mt-6 text-center text-gray-500 text-sm "
 					>
 						<span>Already have an account? </span>
-						<span className="text-blue-500 cursor-pointer">
-							Sign in
-						</span>
+						<span className="text-blue-500 cursor-pointer">Sign in</span>
 					</div>
 				</div>
 			</div>
